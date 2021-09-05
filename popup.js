@@ -1,44 +1,3 @@
-document.getElementById('filter').addEventListener('change', function(event) { // Change date filter
-    // Clear previous filter
-    document.getElementById('tableData').childNodes.forEach((tr) => { 
-        tr.style.display = ''; // unhide every element
-    });
-
-    // Loop through every <tr> and hide the ones which dont correspond to the filter.
-    let comparator;
-    var date = new Date();
-    switch (event.target.value) {
-        case 'lifetime':
-            comparator = new Date(1970, 0);
-            break;
-        case 'week':
-            comparator = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 7);
-            break;
-        case 'month':
-            comparator = new Date(date.getFullYear(), date.getMonth() - 1, date.getDate());
-            break;
-        case 'year':
-            comparator = new Date(date.getFullYear() - 1, date.getMonth(), date.getDate())
-            break;
-        default:
-            console.error('Selected filter is not recongnizable');
-            break;
-    }
-    comparator = comparator.getTime(); // Date to int
-
-    document.getElementById('tableData').childNodes.forEach((tr) => { // Each assignment
-        tr.childNodes.forEach((td) => { // Each column
-            if (td.className == 'start') {
-                let startDate = Date.parse(td.innerText);
-                if (startDate < comparator) {
-                    console.log(new Date(comparator));
-                    tr.style.display = 'none'
-                }
-            }
-        });
-    });
-});
-
 document.getElementById('search').addEventListener('keyup', function(event) { // On key pressed while search bar is focused
     let query = event.target.value;
     console.log(query);
@@ -46,7 +5,8 @@ document.getElementById('search').addEventListener('keyup', function(event) { //
         tr.childNodes.forEach((td) => { // Each column
             if (td.className == 'title') {
                 let regex = new RegExp(query, 'i');
-                if (!regex.test(td.innerText)) {
+                let normalizedColumnTitle = td.innerText.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Ignore accents/diacritics
+                if (!regex.test(normalizedColumnTitle)) {
                     tr.style.display = 'none'
                 } else {
                     tr.style.display = ''
@@ -54,14 +14,6 @@ document.getElementById('search').addEventListener('keyup', function(event) { //
             }
         });
     });
-});
-
-document.getElementById('refresh-filter').addEventListener('click', function() { // Reset all filters
-    document.getElementById('tableData').childNodes.forEach((tr) => { 
-        tr.style.display = ''; // unhide every element
-    });
-    document.getElementById('filter').value = 'lifetime';
-    AnimateAndReset('refresh-filter', 'refresh-filter-anim', 300);
 });
 
 document.getElementById('schedule').addEventListener('click', function() { // Open schedule link
@@ -76,16 +28,15 @@ document.getElementById('schedule').addEventListener('click', function() { // Op
 Main(); // Entry Point
 
 async function Main() {
-    try {
-        if (await IsFetchTimeoutElapsed() === true) {
-            UpdateAll();
-        }
-        initStorageCache;
-        if (IsTableEmpty() === true) {
-            chrome.storage.sync.set({'last-time-fetch': 0}); // Reset fetch timeout
-        }
-    } catch (e) {
-        console.warn(e);
+    if (await IsFetchTimeoutElapsed() === true) {
+        UpdateAll();
+    }
+    initStorageCache;
+    if (IsTableEmpty() === true) {
+        chrome.storage.sync.set({'last-time-fetch': 0}); // Reset fetch timeout
+    }
+    if (await IsFetchTimeoutElapsed() === true) {
+        UpdateAll();
     }
 }
 
