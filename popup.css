@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans&display=swap');
+
+:root {
+    --main-orange: #ff8300;
+    --darker-orange: #c76700;
+    --main-blue: #0c1e3a;
+}
+
+* {
+    font-family: 'Work Sans', sans-serif;
+}
+
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+#logo, #refresh-filter {
+    margin: 0.2rem 0.2rem 0.7rem 0.2rem;
+}
+
+#logo, #options {
+    float: left;
+}
+
+#refresh-filter {
+    float: right;
+    cursor: pointer;
+}
+
+.refresh-filter-anim {
+    -webkit-animation:spin 0.3s linear infinite;
+    -moz-animation:spin 0.3s linear infinite;
+    animation:spin 0.3s linear infinite;
+}
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+#options {
+    left: 50%;
+    transform: translate(12.5%, 0%);
+    margin-top: 0.45rem;
+}
+
+#filter {
+    margin-right: 0.8rem;
+}
+
+#search {
+    width: 15rem;
+}
+
+#schedule {
+    width: 100%;
+    margin: 0 0 10px 0;
+    border: 3px solid var(--main-orange);
+    border-radius: 5px;
+    background: var(--main-orange);
+    color: #ffff;
+    font-weight: bold;
+    text-align: center;
+    display: inline-block;
+    padding: 0.2rem 0;
+    transition: all 0.3s ease;
+}
+
+#schedule:hover {
+    cursor: pointer;
+    border-color: var(--darker-orange);
+    background: var(--darker-orange);
+}
+
+#assignmentsTable {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#assignmentsTable td, #assignmentsTable th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#assignmentsTable th {
+    transition: all 0.3s ease;
+}
+
+#assignmentsTable th:hover {
+    cursor: pointer;
+    background: var(--darker-orange);
+}
+
+#assignmentsTable tr:nth-child(even) {background-color: #f2f2f2;}
+
+#assignmentsTable tr:hover {background-color: #ddd;}
+
+#assignmentsTable th {
+    padding: 8px 18px;
+    text-align: center;
+    background-color: var(--main-orange);
+    color: #f2f2f2;
+}
+
+.title, .subject {
+    text-align: center;
+}
+
+.more-info-button {
+    all: unset
+}
+
+.more-info { /* '+' sign */
+    text-align: center;
+    font-size: large;
+    font-weight: 600;
+    color: var(--main-orange);
+}
+
+#credits {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.more-info {
+    cursor: pointer;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: 200ms ease-in-out;
+  border-radius: 10px;
+  z-index: 10;
+  background-color: white;
+  width: 500px;
+  max-width: 80%;
+}
+
+.modal.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.modal-header {
+    padding: 10px 10px 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header .title {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-header .close-button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.modal-body {
+  padding: 5px 10px 10px 10px;
+}
+
+#overlay {
+  position: fixed;
+  opacity: 0;
+  transition: 200ms ease-in-out;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, .5);
+  pointer-events: none;
+}
+
+#overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}

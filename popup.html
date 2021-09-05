@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="popup.css">
+    </head>
+    <body>
+        <div id="top-bar">
+            <img id="logo" src="/icons/icon_32.png" alt="Refresh" height="25">
+            <span id="options">
+                <select id="filter" class="filters">
+                    <option selected value="lifetime">All</option>
+                    <option value="week">This week</option>
+                    <option value="month">This month</option>
+                    <option value="year">This year</option>
+                </select>
+                <input id="search" class="filters" type="search" placeholder="Search..." autocomplete="off">
+            </span>
+            
+            <img id="refresh-filter" src="/images/refresh.png" alt="Refresh" height="25">
+            <div id="schedule">Open my schedule</div>
+        </div>
+        <table id="assignmentsTable" class=" js-sort-table">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Starting Date</th>
+                    <th>Deathline</th>
+                    <th>More Info</th>
+                </tr>
+            </thead>
+            <tbody id="tableData"></tbody>
+        </table>
+        <div id="credits">By Vulcan#2944</div>
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div class="title" id="popup-title">Example Modal</div>
+                    <button data-close-button class="close-button">&times;</button>
+                </div>
+                <div class="modal-body" id="popup-body">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi fuga omnis voluptates incidunt amet asperiores repudiandae sunt cumque cupiditate harum adipisci eaque repellat ex soluta autem obcaecati veritatis quidem, commodi praesentium, rerum suscipit saepe? Vel inventore voluptate natus labore nam temporibus laboriosam deserunt facere doloremque atque odio nihil, amet officia nostrum cupiditate doloribus similique. Hic earum, aperiam deleniti tempora quae, consectetur quos voluptatum odit temporibus veniam fugiat dignissimos omnis aspernatur laudantium illum. Dolorum veritatis asperiores eius fugit saepe, blanditiis accusamus.</div>
+            </div>
+        <div id="overlay"></div>
+        <script src="popup.js"></script>
+    </body>
+</html>
