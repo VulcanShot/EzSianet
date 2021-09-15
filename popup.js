@@ -46,7 +46,7 @@ const initStorageCache = getAllStorageSyncData().then(items => {
         }
     }
 }).then(() => {
-    repeated.length = repeated.length / 2;
+    if (repeated.length % 2 == 0) { repeated.length /= 2 }
     try {
         repeated.forEach((id) => {
             var endElem = document.getElementsByClassName(id)[0]; // Second element to be added, contains true END date
@@ -137,9 +137,9 @@ async function UpdateAll() {
                     console.log(`${index} Calendar updated: `, data[index]);
                 });
             }
-
             chrome.storage.sync.set({'length' : data.length});
-    });
+        }
+    );
 }
 
 
