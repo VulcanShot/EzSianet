@@ -6,10 +6,10 @@ document.getElementById('search').addEventListener('keyup', function(event) { //
             if (td.className == 'title') {
                 let regex = new RegExp(query, 'i');
                 let normalizedColumnTitle = td.innerText.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Ignore accents/diacritics
-                if (!regex.test(normalizedColumnTitle)) {
-                    tr.style.display = 'none'
-                } else {
+                if (regex.test(normalizedColumnTitle)) { // If search matches
                     tr.style.display = ''
+                } else {
+                    tr.style.display = 'none'
                 }
             }
         });
@@ -41,8 +41,7 @@ const initStorageCache = getAllStorageSyncData().then(items => {
             }
             AddToTable(assignment);
         } catch (error) {
-            console.warn('Error at item ', index);
-            console.warn(error);
+            console.warn('Error at item ', index, ':', error);
         }
     }
 }).then(() => {
@@ -55,15 +54,13 @@ const initStorageCache = getAllStorageSyncData().then(items => {
             startElem.remove();
         });
     } catch (error) {
-        console.warn('Error deleting repeated elements');
-        console.warn(error);
+        console.warn('Error deleting repeated elements: ', error);
     }
 
     try {
         PopupEventListeners();
     } catch (error) {
-        console.warn('Error adding event listeners to buttons');
-        console.warn(error);
+        console.warn('Error adding event listeners to buttons: ', error);
     }
     
     var table = document.getElementById('assignmentsTable');
@@ -124,7 +121,7 @@ async function UpdateAll() {
             });
             
             for (let index = 0; index < data.length; index++) {
-                if (data[index].stDescripcionInterna.length > 6000) {
+                if (data[index].stDescripcionInterna.length > 5500) {
                     // Remove all html tags if text is too long
                     var rawHtml = data[index].stDescripcionInterna;
                     var div = document.createElement("div");
@@ -134,6 +131,9 @@ async function UpdateAll() {
                     console.log(`${index}th description was too long`);
                 }
                 chrome.storage.sync.set({[index.toString()]: data[index] }, function() {
+                    if (chrome.runtime.lastError) {
+                        console.log('Error updating assignments');
+                    }
                     console.log(`${index} Calendar updated: `, data[index]);
                 });
             }
@@ -141,8 +141,6 @@ async function UpdateAll() {
         }
     );
 }
-
-
 
 function IsTableEmpty() {
     return new Promise((resolve, reject) => {
