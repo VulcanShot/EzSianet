@@ -1,11 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Work+Sans&display=swap');
 
-:root {
-    --main-orange: #ff8300;
-    --darker-orange: #c76700;
-    --main-blue: #0c1e3a;
-}
-
 * {
     font-family: 'Work Sans', sans-serif;
 }
@@ -14,9 +8,31 @@
     box-sizing: border-box;
 }
 
+body {
+    --main-color: #ff8300;
+    --secondary-color: #c76700;
+    --background-color: white;
+    --table-color: black;
+    --header-color: #f2f2f2;
+    --table-secondary-color: #f2f2f2;
+
+    background-color: var(--background-color);
+    transition: 0.1s;
+}
+
+body.dark {
+    --main-color: #fd8306;
+    --secondary-color: #c76700;
+    --background-color: #16242f;
+    --table-color: #f2f2f2;
+    --header-color: var(--background-color);
+    --table-secondary-color: #767a7d;
+}
+
 #logo {
     margin: 0.2rem 0 0.7rem 0.2rem;
     float: left;
+    cursor: pointer;
 }
 
 #search {
@@ -27,10 +43,10 @@
 #schedule {
     width: 100%;
     margin: 0 0 10px 0;
-    border: 3px solid var(--main-orange);
+    border: 3px solid var(--main-color);
     border-radius: 5px;
-    background: var(--main-orange);
-    color: #ffff;
+    background: var(--main-color);
+    color: var(--background-color);
     font-weight: bold;
     text-align: center;
     display: inline-block;
@@ -40,8 +56,8 @@
 
 #schedule:hover {
     cursor: pointer;
-    border-color: var(--darker-orange);
-    background: var(--darker-orange);
+    border-color: var(--secondary-color);
+    background: var(--secondary-color);
 }
 
 #assignmentsTable {
@@ -60,18 +76,27 @@
 
 #assignmentsTable th:hover {
     cursor: pointer;
-    background: var(--darker-orange);
+    background: var(--secondary-color);
 }
 
-#assignmentsTable tr:nth-child(even) {background-color: #f2f2f2;}
+#assignmentsTable tr:nth-child(even) {
+    background-color: var(--table-secondary-color);
+}
 
-#assignmentsTable tr:hover {background-color: #ddd;}
+#assignmentsTable tr:hover {
+    background-color: #ddd;
+    color: var(--table-secondary-color);
+}
 
 #assignmentsTable th {
     padding: 8px 18px;
     text-align: center;
-    background-color: var(--main-orange);
-    color: #f2f2f2;
+    background-color: var(--main-color);
+    color: var(--header-color);
+}
+
+#assignmentsTable tbody {
+    color: var(--table-color);
 }
 
 .title, .subject {
@@ -86,12 +111,13 @@
     text-align: center;
     font-size: large;
     font-weight: 600;
-    color: var(--main-orange);
+    color: var(--main-color);
 }
 
 #credits {
     margin-top: 10px;
     text-align: center;
+    color: var(--table-color);
 }
 
 .more-info {
@@ -167,7 +193,7 @@
     margin: -48px 0 0 -48px;
     border: 16px solid #f3f3f3;
     border-radius: 50%;
-    border-top: 16px solid var(--main-orange);
+    border-top: 16px solid var(--main-color);
     -webkit-animation: spin 2s linear infinite;
     animation: spin 2s linear infinite;
 }
@@ -177,7 +203,24 @@
     100% { -webkit-transform: rotate(360deg); }
 }
   
-  @keyframes spin {
+@keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
+/* ::-webkit-scrollbar {
+    width: 10px;
+}
+  
+::-webkit-scrollbar-track {
+    border-radius: 5px;
+}
+   
+::-webkit-scrollbar-thumb {
+    background: var(--main-color); 
+    border-radius: 5px;
+}
+  
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color); 
+} */

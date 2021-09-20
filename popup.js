@@ -25,6 +25,39 @@ document.getElementById('schedule').addEventListener('click', function() { // Op
     });
 });
 
+document.getElementById('logo').addEventListener('click', function(evt) {
+    document.body.classList.toggle('dark')
+    if (document.body.matches('.dark')) { 
+        chrome.storage.local.set({theme : 'dark'})
+        evt.target.src = '/icons/icon_dark.png';
+        return;
+    }
+    chrome.storage.local.set({theme : 'light'})
+    evt.target.src = '/icons/icon_32.png';
+});
+
+let globalAssignments;
+const overlay = document.getElementById('overlay')
+Main();
+
+async function Main() {
+    // for (let index = 0; index < 100; index++) { // REMOVE AFTER UPDATE
+    //     chrome.storage.sync.remove(index.toString()); 
+    // }
+    SetTheme();
+    globalAssignments = await UpdateAll().then(items => { return items; })
+    await initStorageCache(globalAssignments);
+    StopLoading();
+}
+
+function SetTheme() {
+    chrome.storage.local.get('theme', (theme) => {
+        if (theme.theme === 'dark') {
+            document.body.classList.add('dark');
+        }
+    })
+}
+
 let repeated = []; // ID's from repeated assignments
 async function initStorageCache(items) {
     let length = Object.keys(items).length;
@@ -59,19 +92,6 @@ async function initStorageCache(items) {
     sortTable(table, 6, -1);
 };
 
-let globalAssignments;
-Main();
-
-async function Main() {
-    for (let index = 0; index < 100; index++) { // REMOVE AFTER UPDATE
-        chrome.storage.sync.remove(index.toString()); 
-    }
-    globalAssignments = await UpdateAll().then(items => { return items; })
-    await initStorageCache(globalAssignments);
-    StopLoading();
-}
-
-const overlay = document.getElementById('overlay')
 function StopLoading() {
     const loader = document.getElementById('loader');
     loader.style.display = 'none';
