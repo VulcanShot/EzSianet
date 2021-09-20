@@ -26,12 +26,9 @@ document.getElementById('schedule').addEventListener('click', function() { // Op
 });
 
 let repeated = []; // ID's from repeated assignments
-const initStorageCache = getAllStorageSyncData().then(items => {
-    console.log(items);
-    let length = items.length;
+async function initStorageCache(items) {
+    let length = Object.keys(items).length;
     let assignments = []; //All ID's
-
-    GetOnlyAssignmentsIdFromArray(items, assignments);
     
     for (let index = length - 1; index >= 0; index--) {
         var assignment = items[index];
@@ -44,7 +41,7 @@ const initStorageCache = getAllStorageSyncData().then(items => {
             console.warn('Error at item ', index, ':', error);
         }
     }
-}).then(() => {
+
     if (repeated.length % 2 == 0) { repeated.length /= 2 }
     try {
         repeated.forEach((id) => {
@@ -57,46 +54,29 @@ const initStorageCache = getAllStorageSyncData().then(items => {
         console.warn('Error deleting repeated elements: ', error);
     }
 
-    try {
-        PopupEventListeners();
-    } catch (error) {
-        console.warn('Error adding event listeners to buttons: ', error);
-    }
-    
+    ModalEventListeners();
     var table = document.getElementById('assignmentsTable');
     sortTable(table, 6, -1);
-});
+};
 
-Main(); // Entry Point
+let globalAssignments;
+Main();
 
 async function Main() {
-    UpdateOnTimeElapsed();
-    initStorageCache;
-    if (IsTableEmpty() === true) {
-        chrome.storage.sync.set({'last-time-fetch': 0}); // Reset fetch timeout
+    for (let index = 0; index < 100; index++) { // REMOVE AFTER UPDATE
+        chrome.storage.sync.remove(index.toString()); 
     }
-    UpdateOnTimeElapsed();
+    globalAssignments = await UpdateAll().then(items => { return items; })
+    await initStorageCache(globalAssignments);
+    StopLoading();
 }
 
-async function UpdateOnTimeElapsed() {
-    if (await IsFetchTimeoutElapsed() === true) {
-        UpdateAll();
-    }
-}
+const overlay = document.getElementById('overlay')
+function StopLoading() {
+    const loader = document.getElementById('loader');
+    loader.style.display = 'none';
+    overlay.classList.remove('active')
 
-function IsFetchTimeoutElapsed() {
-    const now = Date.now();
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get('last-time-fetch', (ltf) => {
-            if (chrome.runtime.lastError) {
-                return reject(chrome.runtime.lastError);
-            }
-            const lastTimeFetch = ltf['last-time-fetch'];
-            if ((lastTimeFetch + 60000) > now) { return resolve(false); } // False if timeout has not elapsed
-            chrome.storage.sync.set({'last-time-fetch': now});
-            resolve(true);
-        });
-    });
 }
 
 async function UpdateAll() {
@@ -110,36 +90,18 @@ async function UpdateAll() {
     }
     let attributesToDelete = ['objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 'stIdCursoAsignacion', 'stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 'boVisto', 'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 'allDay' ]
     await RefreshLink().then(link => { setLink(link) })
-    fetch(link)
-        .then(response => response.json()).then( json => setData(json))
-        .catch(error => console.error(error))
-        .finally(() => {
+    await fetch(link)
+        .then(response => response.json())
+        .then(json => setData(json))
+        .then(() => {
             data.forEach(assignment => { // For each assignment
                 attributesToDelete.forEach(attribute => { // For each attribute on array
                     delete assignment[attribute]; // Delete attributes
                 });
             });
-            
-            for (let index = 0; index < data.length; index++) {
-                if (data[index].stDescripcionInterna.length > 5500) {
-                    // Remove all html tags if text is too long
-                    var rawHtml = data[index].stDescripcionInterna;
-                    var div = document.createElement("div");
-                    div.innerHTML = rawHtml;
-                    data[index].stDescripcionInterna = div.textContent || div.innerText || "Description is too long.";
-                    div.remove();
-                    console.log(`${index}th description was too long`);
-                }
-                chrome.storage.sync.set({[index.toString()]: data[index] }, function() {
-                    if (chrome.runtime.lastError) {
-                        console.log('Error updating assignments');
-                    }
-                    console.log(`${index} Calendar updated: `, data[index]);
-                });
-            }
-            chrome.storage.sync.set({'length' : data.length});
-        }
-    );
+        })
+        .catch(error => console.error(error))
+    return await Promise.resolve(data);
 }
 
 function IsTableEmpty() {
@@ -147,33 +109,6 @@ function IsTableEmpty() {
         if (document.getElementById('tableData').childNodes.length < 1) { return resolve(true); }
         resolve(false);
     });
-}
-
-function getAllStorageSyncData() {
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get(null, (items) => {
-            if (chrome.runtime.lastError) {
-                return reject(chrome.runtime.lastError);
-            }
-            resolve(items);
-        });
-    });
-}
-
-function GetOnlyAssignmentsIdFromArray(inArr, outArr) {
-    for (var key in inArr) {
-        if (/\d/.test(key)) {
-            outArr.push(inArr[key].id)
-        }
-    }
-}
-
-function GetOnlyAssignmentsFromArray(inArr, outArr) {
-    for (var key in inArr) {
-        if (/\d/.test(key)) {
-            outArr.push(inArr[key])
-        }
-    }
 }
 
 function RefreshLink() { // Return an updated link in promise
@@ -279,24 +214,20 @@ function ParseDateToInt(str) {
     return Date.parse(str);
 }
 
-// POPUP
+// MODAL
 
-function PopupEventListeners() {
+function ModalEventListeners() {
     const openModalButtons = document.querySelectorAll('[data-modal-target]')
     const closeModalButtons = document.querySelectorAll('[data-close-button]')
 
     openModalButtons.forEach(button => {
         button.addEventListener('click', () => {
             const assignmentId = button.parentElement.className;
-            getAllStorageSyncData().then(items => {
-                let assignments = [];
-                GetOnlyAssignmentsFromArray(items, assignments);
-                let selectedAssignment = assignments.find(assigned => assigned.id === assignmentId);
-                SetModalTitle(selectedAssignment.title);
-                let body = 
-                `${selectedAssignment.stDescripcionInterna}`;
-                SetModalBody(body);
-            });
+            let selectedAssignment = globalAssignments.find(assigned => assigned.id === assignmentId);
+            SetModalTitle(selectedAssignment.title);
+            let body = 
+            `${selectedAssignment.stDescripcionInterna}`;
+            SetModalBody(body);
             const modal = document.querySelector(button.dataset.modalTarget)
             openModal(modal)
         })
@@ -310,7 +241,6 @@ function PopupEventListeners() {
     })
 }
 
-const overlay = document.getElementById('overlay')
 overlay.addEventListener('click', () => {
     const modals = document.querySelectorAll('.modal.active')
     modals.forEach(modal => {
