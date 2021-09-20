@@ -54,6 +54,7 @@ function SetTheme() {
     chrome.storage.local.get('theme', (theme) => {
         if (theme.theme === 'dark') {
             document.body.classList.add('dark');
+            document.getElementById('logo').src = '/icons/icon_dark.png';
         }
     })
 }
