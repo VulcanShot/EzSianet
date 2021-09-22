@@ -41,9 +41,9 @@ const overlay = document.getElementById('overlay')
 Main();
 
 async function Main() {
-    // for (let index = 0; index < 100; index++) { // REMOVE AFTER UPDATE
-    //     chrome.storage.sync.remove(index.toString()); 
-    // }
+    for (let index = 0; index < 100; index++) { // REMOVE AFTER UPDATE
+        chrome.storage.sync.remove(index.toString()); 
+    }
     SetTheme();
     globalAssignments = await UpdateAll().then(items => { return items; })
     await initStorageCache(globalAssignments);

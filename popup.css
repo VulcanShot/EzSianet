@@ -75,7 +75,6 @@ body.dark {
 }
 
 #assignmentsTable th:hover {
-    cursor: pointer;
     background: var(--secondary-color);
 }
 
@@ -84,8 +83,8 @@ body.dark {
 }
 
 #assignmentsTable tr:hover {
-    background-color: #ddd;
-    color: var(--table-secondary-color);
+    background-color: #bebebe;
+    color: var(--background-color);
 }
 
 #assignmentsTable th {
@@ -208,8 +207,9 @@ body.dark {
     100% { transform: rotate(360deg); }
 }
 
-/* ::-webkit-scrollbar {
+::-webkit-scrollbar {
     width: 10px;
+    background: var(--table-secondary-color); 
 }
   
 ::-webkit-scrollbar-track {
@@ -223,4 +223,4 @@ body.dark {
   
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color); 
-} */
+}
