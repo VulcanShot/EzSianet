@@ -225,7 +225,8 @@ function ParseDate(str) {
         return 'Today';
     }
     if (date.toString() == tomorrow.toString()) {
-        return 'Tomorrow'.fontcolor('red');
+        let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
+        return 'Tomorrow'.fontcolor(fontcolor);
     }
 
     return new Intl.DateTimeFormat('en', { dateStyle: 'full' }).format(date);

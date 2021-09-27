@@ -40,6 +40,10 @@ body.dark {
     width: 20rem;
 }
 
+input:focus, textarea:focus, select:focus{
+    outline: none;
+}
+
 #schedule {
     width: 100%;
     margin: 0 0 10px 0;
