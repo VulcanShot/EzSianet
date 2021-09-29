@@ -128,16 +128,18 @@ input:focus, textarea:focus, select:focus{
 }
 
 .modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  transition: 200ms ease-in-out;
-  border-radius: 10px;
-  z-index: 10;
-  background-color: white;
-  width: 500px;
-  max-width: 80%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: 200ms ease-in-out;
+    border-radius: 10px;
+    z-index: 10;
+    background-color: white;
+    width: 500px;
+    max-width: 80%;
+    max-height: 80%;
+    overflow: auto;
 }
 
 .modal.active {
@@ -212,7 +214,8 @@ input:focus, textarea:focus, select:focus{
 }
 
 ::-webkit-scrollbar {
-    width: 10px;
+    width: 2vw;
+    height: 1.8vh;
     background: var(--table-secondary-color); 
 }
   
