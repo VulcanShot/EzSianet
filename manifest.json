@@ -1,6 +1,6 @@
 {
     "name": "EzSianet",
-    "description": "Access information from SiaNet without entering to the page.",
+    "description": "Quickly see all your Sianet assignments and schedule with this extension.",
     "version": "0.6.2",
     "manifest_version": 3,
     "background": {
