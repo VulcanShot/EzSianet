@@ -1,6 +1,5 @@
 document.getElementById('search').addEventListener('keyup', function(event) { // On key pressed while search bar is focused
     let query = event.target.value;
-    console.log(query);
     document.getElementById('tableData').childNodes.forEach((tr) => { // Each assignment
         tr.childNodes.forEach((td) => { // Each column
             if (td.className == 'title') {
@@ -41,10 +40,8 @@ const overlay = document.getElementById('overlay')
 Main();
 
 async function Main() {
-    for (let index = 0; index < 100; index++) { // REMOVE AFTER UPDATE
-        chrome.storage.sync.remove(index.toString()); 
-    }
     SetTheme();
+    ShowFirstTimeMessage();
     globalAssignments = await UpdateAll().then(items => { return items; })
     await initStorageCache(globalAssignments);
     StopLoading();
@@ -52,41 +49,57 @@ async function Main() {
 
 function SetTheme() {
     chrome.storage.local.get('theme', (theme) => {
-        if (theme.theme === 'dark') {
-            document.body.classList.add('dark');
-            document.getElementById('logo').src = '/icons/icon_dark.png';
-        }
-    })
+        if (theme.theme !== 'dark') return
+        document.body.classList.add('dark');
+        document.getElementById('logo').src = '/icons/icon_dark.png';
+    });
+}
+
+function ShowFirstTimeMessage() {
+    chrome.storage.local.get('isFirstTime', (obj) => {
+        if (obj.isFirstTime !== true) return
+        SetModalTitle('Welcome to EzSianet');
+        SetModalBody(
+            `<p>Follow the instructions below to quickly set all things up:</p>
+            <p>1. Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
+            <br>2. Open your calendar and schedule on the website
+            <br>3. Enjoy the extension!
+            <br>Remember that the information is updated automatically</p>`
+            )
+        const modal = document.getElementById('modal');
+        modal.classList.add('announcement');
+        openModal(modal);
+        StopLoading();
+    });
+    chrome.storage.local.set({'isFirstTime': false});
 }
 
 let repeated = []; // ID's from repeated assignments
 async function initStorageCache(items) {
+    console.log(items);
     let length = Object.keys(items).length;
-    let assignments = []; //All ID's
+    let allIds = [];
+
+    items.forEach(element => {
+        allIds.push(element.id);
+    });
     
-    for (let index = length - 1; index >= 0; index--) {
-        var assignment = items[index];
-        try {
-            if (IsRepeated(assignments, assignment.id)) {
-                repeated.push(assignment.id);
-            }
-            AddToTable(assignment);
-        } catch (error) {
-            console.warn('Error at item ', index, ':', error);
+    for (let i = length - 1; i >= 0; i--) {
+        var assignment = items[i];
+        if (IsRepeated(allIds, assignment.id)) {
+            repeated.push(assignment.id);
         }
+        AddToTable(assignment);
     }
 
     if (repeated.length % 2 == 0) { repeated.length /= 2 }
-    try {
-        repeated.forEach((id) => {
-            var endElem = document.getElementsByClassName(id)[0]; // Second element to be added, contains true END date
-            var startElem = document.getElementsByClassName(id)[1]; // First element to be added, contains true START date 
-            endElem.childNodes[3].innerText = startElem.childNodes[3].innerText; // Chanege starting date
-            startElem.remove();
-        });
-    } catch (error) {
-        console.warn('Error deleting repeated elements: ', error);
-    }
+    
+    repeated.forEach((id) => {
+        var endElem = document.getElementsByClassName(id)[0]; // Second element to be added, contains true END date
+        var startElem = document.getElementsByClassName(id)[1]; // First element to be added, contains true START date 
+        endElem.childNodes[3].innerText = startElem.childNodes[3].innerText; // Change starting date
+        startElem.remove();
+    });
 
     ModalEventListeners();
     var table = document.getElementById('assignmentsTable');
@@ -96,8 +109,7 @@ async function initStorageCache(items) {
 function StopLoading() {
     const loader = document.getElementById('loader');
     loader.style.display = 'none';
-    overlay.classList.remove('active')
-
+    overlay.classList.remove('active');
 }
 
 async function UpdateAll() {
@@ -116,20 +128,13 @@ async function UpdateAll() {
         .then(json => setData(json))
         .then(() => {
             data.forEach(assignment => { // For each assignment
-                attributesToDelete.forEach(attribute => { // For each attribute on array
+                attributesToDelete.forEach(attribute => { // For each attribute on attributesToDelete
                     delete assignment[attribute]; // Delete attributes
                 });
             });
         })
         .catch(error => console.error(error))
     return await Promise.resolve(data);
-}
-
-function IsTableEmpty() {
-    return new Promise((resolve, reject) => {
-        if (document.getElementById('tableData').childNodes.length < 1) { return resolve(true); }
-        resolve(false);
-    });
 }
 
 function RefreshLink() { // Return an updated link in promise
@@ -167,23 +172,19 @@ function AnimateAndReset(id, animClass, ms) { // Add animation class and remove 
 
 function AddToTable(obj) { // Add obj to table
     let k = '<tbody>'
-    try {
-        k+= `<tr class="${obj.id}">`;
-            k+= '<td class="title">' + obj.title + '</td>'
-            k+= '<td class="subject">' + titleize(obj.DescripcionCurso) + '</td>'
-            k+= '<td class="type">' + ParseSianetType(obj.tipo) + '</td>'
-            k+= '<td class="start">' + ParseDate(obj.start) + '</td>'
-            k+= '<td class="end">' + ParseDate(obj.end); + '</td>'
-            k+= '<td class="more-info" data-modal-target="#modal">'
-            k+=     '<button class="more-info-button">&plus;</button>'
-            k+= '</td>'
-            k+= `<td class="realEnd" style="display: none">${ParseDateToInt(obj.end)}</td>`
-    }
-    catch (ex) {
-        console.warn('Error adding to table: ', ex);
-    }
-    k+= '</tr>';
-    k+='</tbody>';
+            k+= `<tr class="${obj.id}">`;
+                k+= '<td class="title">' + obj.title + '</td>'
+                k+= '<td class="subject">' + titleize(obj.DescripcionCurso) + '</td>'
+                k+= '<td class="type">' + ParseSianetType(obj.tipo) + '</td>'
+                k+= '<td class="start">' + ParseDate(obj.start) + '</td>'
+                k+= '<td class="end">' + ParseDate(obj.end); + '</td>'
+                k+= '<td class="more-info" data-modal-target="#modal">'
+                k+=     '<button class="more-info-button">&plus;</button>'
+                k+= '</td>'
+                k+= `<td class="realEnd" style="display: none">${ParseDateToInt(obj.end)}</td>`
+            k+= '</tr>';
+        k+='</tbody>';
+        
     document.getElementById('tableData').innerHTML += k;
 }
 
@@ -247,39 +248,39 @@ function ModalEventListeners() {
             const assignmentId = button.parentElement.className;
             let selectedAssignment = globalAssignments.find(assigned => assigned.id === assignmentId);
             SetModalTitle(selectedAssignment.title);
-            let body = 
-            `${selectedAssignment.stDescripcionInterna}`;
+            let body = selectedAssignment.stDescripcionInterna;
             SetModalBody(body);
-            const modal = document.querySelector(button.dataset.modalTarget)
-            openModal(modal)
+            const modal = document.querySelector(button.dataset.modalTarget);
+            modal.classList.remove('announcement');
+            openModal(modal);
         })
     })
 
     closeModalButtons.forEach(button => {
         button.addEventListener('click', () => {
-            const modal = button.closest('.modal')
-            closeModal(modal)
+            const modal = button.closest('.modal');
+            closeModal(modal);
         })
     })
 }
 
 overlay.addEventListener('click', () => {
-    const modals = document.querySelectorAll('.modal.active')
+    const modals = document.querySelectorAll('.modal.active');
     modals.forEach(modal => {
-        closeModal(modal)
+        closeModal(modal);
     })
 })
 
 function openModal(modal) {
-  if (modal == null) return
-  modal.classList.add('active')
-  overlay.classList.add('active')
+    if (modal == null) return
+    modal.classList.add('active');
+    overlay.classList.add('active');
 }
 
 function closeModal(modal) {
-  if (modal == null) return
-  modal.classList.remove('active')
-  overlay.classList.remove('active')
+    if (modal == null) return
+    modal.classList.remove('active');
+    overlay.classList.remove('active');
 }
 
 function SetModalTitle(title) {

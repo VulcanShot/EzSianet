@@ -143,7 +143,16 @@ input:focus, textarea:focus, select:focus{
 }
 
 .modal.active {
-  transform: translate(-50%, -50%) scale(1);
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.modal.announcement {
+    background: var(--main-color);
+    color: white;
+}
+
+.modal.announcement .close-button {
+    color: white;
 }
 
 .modal-header {
@@ -154,38 +163,38 @@ input:focus, textarea:focus, select:focus{
 }
 
 .modal-header .title {
-  font-size: 1.25rem;
-  font-weight: bold;
+    font-size: 1.25rem;
+    font-weight: bold;
 }
 
 .modal-header .close-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  background: none;
-  font-size: 1.25rem;
-  font-weight: bold;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.25rem;
+    font-weight: bold;
 }
 
 .modal-body {
-  padding: 5px 10px 10px 10px;
+    padding: 5px 10px 10px 10px;
 }
 
 #overlay {
-  position: fixed;
-  opacity: 0;
-  transition: 200ms ease-in-out;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, .5);
-  pointer-events: none;
+    position: fixed;
+    opacity: 0;
+    transition: 200ms ease-in-out;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .5);
+    pointer-events: none;
 }
 
 #overlay.active {
-  opacity: 1;
-  pointer-events: all;
+    opacity: 1;
+    pointer-events: all;
 }
 
 #loader {

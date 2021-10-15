@@ -1,3 +1,4 @@
+chrome.runtime.OnInstalled(OnInstallation);
 chrome.tabs.onCreated.addListener(ListenToWebRequests)
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status != 'complete') return
@@ -24,4 +25,9 @@ function CheckWebRequests(details) {
         console.log('Schedule updated: ', url);
         return;
     }
+}
+
+function OnInstallation(details) {
+    if (details.reason != chrome.runtime.OnInstalledReason.INSTALL) return;
+    chrome.storage.local.set({'isFirstTime': true});
 }
