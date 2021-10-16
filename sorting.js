@@ -1,4 +1,5 @@
-// SORT TABLE
+//https://www.kryogenix.org/code/browser/sorttable/sorttable.js
+
 /**
  * Sort the rows in a HTML Table
  *
