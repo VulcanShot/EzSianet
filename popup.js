@@ -41,10 +41,10 @@ Main();
 
 async function Main() {
     SetTheme();
-    ShowFirstTimeMessage();
     globalAssignments = await UpdateAll().then(items => { return items; })
     await initStorageCache(globalAssignments);
     StopLoading();
+    ShowFirstTimeMessage();
 }
 
 function SetTheme() {
@@ -61,15 +61,15 @@ function ShowFirstTimeMessage() {
         SetModalTitle('Welcome to EzSianet');
         SetModalBody(
             `<p>Follow the instructions below to quickly set all things up:</p>
-            <p>1. Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
+             <p>1. Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
             <br>2. Open your calendar and schedule on the website
             <br>3. Enjoy the extension!
-            <br>Remember that the information is updated automatically</p>`
+            <br>Remember that the information is updated automatically</p>
+            <br>You can toggle between light and dark UI modes by clicking on the logo.`
             )
         const modal = document.getElementById('modal');
         modal.classList.add('announcement');
         openModal(modal);
-        StopLoading();
     });
     chrome.storage.local.set({'isFirstTime': false});
 }
