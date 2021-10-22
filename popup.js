@@ -219,14 +219,14 @@ function ParseDate(str) {
     let tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
     tomorrow.setHours(0, 0, 0, 0);
     
+    let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
     if (date.toString() == yesterday.toString()) {
         return 'Yesterday';
     }
     if (date.toString() == today.toString()) {
-        return 'Today';
+        return 'Today'.fontcolor(fontcolor);
     }
     if (date.toString() == tomorrow.toString()) {
-        let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
         return 'Tomorrow'.fontcolor(fontcolor);
     }
 

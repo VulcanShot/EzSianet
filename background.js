@@ -1,4 +1,4 @@
-chrome.runtime.OnInstalled(OnInstallation);
+chrome.runtime.onInstalled.addListener(details => { OnInstallation(details) });
 chrome.tabs.onCreated.addListener(ListenToWebRequests)
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (changeInfo.status != 'complete') return
