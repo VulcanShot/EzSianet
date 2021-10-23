@@ -149,6 +149,8 @@ input:focus, textarea:focus, select:focus{
 .modal.announcement {
     background: var(--main-color);
     color: white;
+    width: fit-content;
+    height: fit-content;
 }
 
 .modal.announcement .close-button {

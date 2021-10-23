@@ -41,10 +41,10 @@ Main();
 
 async function Main() {
     SetTheme();
+    ShowFirstTimeMessage();
     globalAssignments = await UpdateAll().then(items => { return items; })
     await initStorageCache(globalAssignments);
     StopLoading();
-    ShowFirstTimeMessage();
 }
 
 function SetTheme() {
@@ -58,6 +58,10 @@ function SetTheme() {
 function ShowFirstTimeMessage() {
     chrome.storage.local.get('isFirstTime', (obj) => {
         if (obj.isFirstTime !== true) return
+        HideLoader();
+        [...Array(5)].forEach((_, i) => {
+            AddDummyRow();
+        });
         SetModalTitle('Welcome to EzSianet');
         SetModalBody(
             `<p>Follow the instructions below to quickly set all things up:</p>
@@ -72,6 +76,24 @@ function ShowFirstTimeMessage() {
         openModal(modal);
     });
     chrome.storage.local.set({'isFirstTime': false});
+}
+
+function AddDummyRow() {
+    let k = '<tbody>'
+            k+= `<tr>`;
+                k+= '<td class="title"></td>'
+                k+= '<td class="subject"></td>'
+                k+= '<td class="type"></td>'
+                k+= '<td class="start"></td>'
+                k+= '<td class="end"></td>'
+                k+= '<td class="more-info">'
+                k+=     '<button class="more-info-button"></button>'
+                k+= '</td>'
+                k+= `<td class="realEnd" style="display: none"></td>`
+            k+= '</tr>';
+        k+='</tbody>';
+        
+    document.getElementById('tableData').innerHTML += k;
 }
 
 let repeated = []; // ID's from repeated assignments
@@ -107,9 +129,13 @@ async function initStorageCache(items) {
 };
 
 function StopLoading() {
+    HideLoader();
+    overlay.classList.remove('active');
+}
+
+function HideLoader() {
     const loader = document.getElementById('loader');
     loader.style.display = 'none';
-    overlay.classList.remove('active');
 }
 
 async function UpdateAll() {
