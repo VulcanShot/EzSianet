@@ -30,14 +30,18 @@ body.dark {
 }
 
 #logo {
-    margin: 0.2rem 0 0.7rem 0.2rem;
     float: left;
     cursor: pointer;
 }
 
 #search {
-    margin: 0.45rem 0 0 15%;
-    width: 20rem;
+    margin: auto;
+    display: block;
+    width: 24rem;
+}
+
+#top-bar {
+    margin: 10px 0px 14px 0;
 }
 
 input:focus, textarea:focus, select:focus{
