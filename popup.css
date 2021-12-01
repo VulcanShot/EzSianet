@@ -231,7 +231,7 @@ input:focus, textarea:focus, select:focus{
 ::-webkit-scrollbar {
     width: 2vw;
     height: 1.8vh;
-    background: var(--table-secondary-color); 
+    background: var(--table-secondary-color);
 }
   
 ::-webkit-scrollbar-track {

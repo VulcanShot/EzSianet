@@ -1,7 +1,7 @@
-document.getElementById('search').addEventListener('keyup', function(event) { // On key pressed while search bar is focused
+$('#search').keyup(function(event) { // On key pressed while search bar is focused
     let query = event.target.value;
-    document.getElementById('tableData').childNodes.forEach((tr) => { // Each assignment
-        tr.childNodes.forEach((td) => { // Each column
+    $('#tableData').children().each((index, tr) => { // Each assignment
+        $(tr).children().each((index, td) => { // Each column
             if (td.className == 'title') {
                 let regex = new RegExp(query, 'i');
                 let normalizedColumnTitle = td.innerText.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Ignore accents/diacritics
@@ -15,7 +15,7 @@ document.getElementById('search').addEventListener('keyup', function(event) { //
     });
 });
 
-document.getElementById('schedule').addEventListener('click', function() { // Open schedule link
+$('#schedule').click(function() { // Open schedule link
     chrome.storage.sync.get('schedule', (link) => {
         if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError);
@@ -24,8 +24,8 @@ document.getElementById('schedule').addEventListener('click', function() { // Op
     });
 });
 
-document.getElementById('logo').addEventListener('click', function(evt) {
-    document.body.classList.toggle('dark')
+$('#logo').click(function(evt) {
+    $(document.body).toggleClass('dark')
     if (document.body.matches('.dark')) { 
         chrome.storage.local.set({theme : 'dark'})
         evt.target.src = '/icons/icon_dark.png';
@@ -36,7 +36,6 @@ document.getElementById('logo').addEventListener('click', function(evt) {
 });
 
 let globalAssignments;
-const overlay = document.getElementById('overlay')
 Main();
 
 async function Main() {
@@ -50,8 +49,8 @@ async function Main() {
 function SetTheme() {
     chrome.storage.local.get('theme', (theme) => {
         if (theme.theme !== 'dark') return
-        document.body.classList.add('dark');
-        document.getElementById('logo').src = '/icons/icon_dark.png';
+        $(document.body).toggleClass('dark');
+        $('#logo').attr('src', '/icons/icon_dark.png');
     });
 }
 
@@ -70,9 +69,8 @@ function ShowFirstTimeMessage() {
             <br>3. Enjoy the extension!
             <br>Remember that the information is updated automatically</p>
             <br>You can toggle between light and dark UI modes by clicking on the logo.`
-            )
-        const modal = document.getElementById('modal');
-        modal.classList.add('announcement');
+        );
+        $('#modal').addClass('announcement');
         openModal(modal);
     });
     chrome.storage.local.set({'isFirstTime': false});
@@ -128,15 +126,23 @@ async function initStorageCache(items) {
     sortTable(table, 6, -1);
 };
 
-function StopLoading() {
-    HideLoader();
-    overlay.classList.remove('active');
+function IsRepeated(arr, id) {
+    var count = 0;
+    arr.forEach((_id) => {
+        if (_id === id) {
+            count++;
+        }
+    });
+    if (count > 1) { return true; }
+    return false;
 }
 
-function HideLoader() {
-    const loader = document.getElementById('loader');
-    loader.style.display = 'none';
+function StopLoading() {
+    HideLoader();
+    $('#overlay').removeClass('active');
 }
+
+function HideLoader() { $('#loader').css('display', 'none'); }
 
 async function UpdateAll() {
     let data;
@@ -172,28 +178,10 @@ function RefreshLink() { // Return an updated link in promise
             let updatedLink = new URL(link.link);
             updatedLink.searchParams.set('end', encodeURI(new Date().toISOString()));
             chrome.storage.sync.set({link: updatedLink.href});
+            console.log(updatedLink.href)
             resolve(updatedLink.href);
         });
     });
-}
-
-function IsRepeated(arr, id) {
-    var count = 0;
-    arr.forEach((_id) => {
-        if (_id === id) {
-            count++;
-        }
-    });
-    if (count > 1) { return true; }
-    return false;
-}
-
-function AnimateAndReset(id, animClass, ms) { // Add animation class and remove it after ms miliseconds
-    var refresh = document.getElementById(id);
-    refresh.classList.add(animClass);
-    setTimeout(() => {
-        refresh.classList.remove(animClass);
-    }, ms);
 }
 
 function AddToTable(obj) { // Add obj to table
@@ -270,7 +258,7 @@ function ModalEventListeners() {
     const closeModalButtons = document.querySelectorAll('[data-close-button]')
 
     openModalButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        $(button).click(() => {
             const assignmentId = button.parentElement.className;
             let selectedAssignment = globalAssignments.find(assigned => assigned.id === assignmentId);
             SetModalTitle(selectedAssignment.title);
@@ -283,16 +271,15 @@ function ModalEventListeners() {
     })
 
     closeModalButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const modal = button.closest('.modal');
+        $(button).click((event) => {
+            const modal = event.target.closest('.modal');
             closeModal(modal);
         })
     })
 }
 
-overlay.addEventListener('click', () => {
-    const modals = document.querySelectorAll('.modal.active');
-    modals.forEach(modal => {
+$('#overlay').click(() => {
+    $('.modal.active').each((index, modal) => {
         closeModal(modal);
     })
 })
@@ -300,21 +287,19 @@ overlay.addEventListener('click', () => {
 function openModal(modal) {
     if (modal == null) return
     modal.classList.add('active');
-    overlay.classList.add('active');
+    $('#overlay').addClass('active');
 }
 
 function closeModal(modal) {
     if (modal == null) return
     modal.classList.remove('active');
-    overlay.classList.remove('active');
+    $('#overlay').removeClass('active');
 }
 
 function SetModalTitle(title) {
-    const modalTitle = document.getElementById('popup-title');
-    modalTitle.innerText = title;
+    $('#popup-title').text(title);
 }
 
 function SetModalBody(body) {
-    const modalBody = document.getElementById('popup-body');
-    modalBody.innerHTML = body;
-}   
+    $('#popup-body').html(body);
+}  
