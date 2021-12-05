@@ -1,4 +1,4 @@
-$('#search').keyup(function(event) { // On key pressed while search bar is focused
+$('#search').on('input', function(event) { // On key pressed while search bar is focused
     let query = event.target.value;
     $('#tableData').children().each((index, tr) => { // Each assignment
         $(tr).children().each((index, td) => { // Each column
@@ -26,7 +26,7 @@ $('#schedule').click(function() { // Open schedule link
 
 $('#logo').click(function(evt) {
     $(document.body).toggleClass('dark')
-    if (document.body.matches('.dark')) { 
+    if ($(document.body).hasClass('.dark')) { 
         chrome.storage.local.set({theme : 'dark'})
         evt.target.src = '/icons/icon_dark.png';
         return;
@@ -65,10 +65,10 @@ function ShowFirstTimeMessage() {
         SetModalBody(
             `<p>Follow the instructions below to quickly set all things up:</p>
              <p>1. Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
-            <br>2. Open your calendar and schedule on the website
-            <br>3. Enjoy the extension!
-            <br>Remember that the information is updated automatically</p>
-            <br>You can toggle between light and dark UI modes by clicking on the logo.`
+             <br>2. Open your calendar and schedule on the website
+             <br>3. Enjoy the extension!
+             <br>Remember that the information is updated automatically</p>
+             <br>You can toggle between light and dark UI modes by clicking on the logo.`
         );
         $('#modal').addClass('announcement');
         openModal(modal);
