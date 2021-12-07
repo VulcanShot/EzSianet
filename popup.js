@@ -1,19 +1,22 @@
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
-    let query = event.target.value;
-    $('#tableData').children().each((index, tr) => { // Each assignment
-        $(tr).children().each((index, td) => { // Each column
-            if (td.className == 'title') {
-                let regex = new RegExp(query, 'i');
-                let normalizedColumnTitle = td.innerText.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // Ignore accents/diacritics
-                if (regex.test(normalizedColumnTitle)) { // If search matches
-                    tr.style.display = ''
-                } else {
-                    tr.style.display = 'none'
-                }
+    let query = NormalizeDiactitics(event.target.value);
+    $('#tableData td').each((index, td) => { // Each assignment
+        if (td.className == 'title') {
+            let queryRegex = new RegExp(query, 'i');
+            let normalizedColumnTitle = NormalizeDiactitics(td.innerText);
+            let tr = $(td).parent();
+            if (queryRegex.test(normalizedColumnTitle)) { // If search matches
+                tr.css('display', '');
+            } else {
+                tr.css('display', 'none');
             }
-        });
+        }
     });
 });
+
+function NormalizeDiactitics(text) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 
 $('#schedule').click(function() { // Open schedule link
     chrome.storage.sync.get('schedule', (link) => {
@@ -115,15 +118,14 @@ async function initStorageCache(items) {
     if (repeated.length % 2 == 0) { repeated.length /= 2 }
     
     repeated.forEach((id) => {
-        var endElem = document.getElementsByClassName(id)[0]; // Second element to be added, contains true END date
-        var startElem = document.getElementsByClassName(id)[1]; // First element to be added, contains true START date 
-        endElem.childNodes[3].innerText = startElem.childNodes[3].innerText; // Change starting date
+        var endElem = $('.' + id).eq(0); // Second element to be added, contains true END date
+        var startElem = $('.' + id).eq(1); // First element to be added, contains true START date 
+        endElem.children('.start').text(startElem.children('.start').text()); // Change starting date
         startElem.remove();
     });
 
     ModalEventListeners();
-    var table = document.getElementById('assignmentsTable');
-    sortTable(table, 6, -1);
+    sortTable($('#assignmentsTable').get(0), 6, -1);
 };
 
 function IsRepeated(arr, id) {
@@ -153,7 +155,10 @@ async function UpdateAll() {
     function setLink(_link) {
         link = _link;
     }
-    let attributesToDelete = ['objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 'stIdCursoAsignacion', 'stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 'boVisto', 'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 'allDay' ]
+    let attributesToDelete = ['objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 'stIdCursoAsignacion', 
+                                'stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 'boVisto', 
+                                'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
+                                'allDay' ]
     await RefreshLink().then(link => { setLink(link) })
     await fetch(link)
         .then(response => response.json())
@@ -254,10 +259,7 @@ function ParseDateToInt(str) {
 // MODAL
 
 function ModalEventListeners() {
-    const openModalButtons = document.querySelectorAll('[data-modal-target]')
-    const closeModalButtons = document.querySelectorAll('[data-close-button]')
-
-    openModalButtons.forEach(button => {
+    $('[data-modal-target]').each((index, button) => {
         $(button).click(() => {
             const assignmentId = button.parentElement.className;
             let selectedAssignment = globalAssignments.find(assigned => assigned.id === assignmentId);
@@ -270,7 +272,7 @@ function ModalEventListeners() {
         })
     })
 
-    closeModalButtons.forEach(button => {
+    $('[data-close-button]').each((index, button) => {
         $(button).click((event) => {
             const modal = event.target.closest('.modal');
             closeModal(modal);
