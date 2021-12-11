@@ -38,14 +38,13 @@ $('#logo').click(function(evt) {
     evt.target.src = '/icons/icon_32.png';
 });
 
-let globalAssignments;
+let removeOverlay = true;
 Main();
 
 async function Main() {
     SetTheme();
     ShowFirstTimeMessage();
-    globalAssignments = await UpdateAll().then(items => { return items; })
-    await initStorageCache(globalAssignments);
+    await UpdateAll().then(async (items) => { await initStorageCache(items); })
     StopLoading();
 }
 
@@ -61,11 +60,8 @@ function ShowFirstTimeMessage() {
     chrome.storage.local.get('isFirstTime', (obj) => {
         if (obj.isFirstTime !== true) return
         HideLoader();
-        [...Array(5)].forEach((_, i) => {
-            AddDummyRow();
-        });
-        SetModalTitle('Welcome to EzSianet');
-        SetModalBody(
+        ShowAnnouncement(
+            'Welcome to EzSianet',
             `<p>Follow the instructions below to quickly set all things up:</p>
              <p>1. Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
              <br>2. Open your calendar and schedule on the website
@@ -73,8 +69,6 @@ function ShowFirstTimeMessage() {
              <br>Remember that the information is updated automatically</p>
              <br>You can toggle between light and dark UI modes by clicking on the logo.`
         );
-        $('#modal').addClass('announcement');
-        openModal(modal);
     });
     chrome.storage.local.set({'isFirstTime': false});
 }
@@ -97,29 +91,47 @@ function AddDummyRow() {
     document.getElementById('tableData').innerHTML += k;
 }
 
+function DisplayDummyTable() {
+    for (let index = 0; index <= 4; index++) {
+        AddDummyRow();
+    }
+}
+
 let repeated = []; // ID's from repeated assignments
 async function initStorageCache(items) {
-    console.log(items);
+    console.table(items);
     let length = Object.keys(items).length;
-    let allIds = [];
 
-    items.forEach(element => {
-        allIds.push(element.id);
-    });
+    if (items.length == 0) {
+        ShowAnnouncement(
+            'There was an error :C',
+            `<p>Please follow the instructions below:</p>
+            <p><b>1.</b> Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
+            <br><b>2.</b> Open your calendar and schedule on the website
+            <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
+        );
+        removeOverlay = false;
+        $('#overlay').off('click');
+        $('[data-close-button]').hide();
+        return;
+    }
     
     for (let i = length - 1; i >= 0; i--) {
         var assignment = items[i];
-        if (IsRepeated(allIds, assignment.id)) {
+        if (IsIdRepeated(items, assignment.id)) {
             repeated.push(assignment.id);
+        }
+        if (new Date(assignment.end).getFullYear() !== new Date().getFullYear()) {
+            continue;
         }
         AddToTable(assignment);
     }
 
     if (repeated.length % 2 == 0) { repeated.length /= 2 }
     
-    repeated.forEach((id) => {
-        var endElem = $('.' + id).eq(0); // Second element to be added, contains true END date
-        var startElem = $('.' + id).eq(1); // First element to be added, contains true START date 
+    repeated.forEach((assignmentId) => {
+        var endElem = $('.' + assignmentId).eq(0); // Second element to be added, contains true END date
+        var startElem = $('.' + assignmentId).eq(1); // First element to be added, contains true START date 
         endElem.children('.start').text(startElem.children('.start').text()); // Change starting date
         startElem.remove();
     });
@@ -128,10 +140,10 @@ async function initStorageCache(items) {
     sortTable($('#assignmentsTable').get(0), 6, -1);
 };
 
-function IsRepeated(arr, id) {
+function IsIdRepeated(arr, val) {
     var count = 0;
-    arr.forEach((_id) => {
-        if (_id === id) {
+    arr.forEach((assignment) => {
+        if (assignment.id === val) {
             count++;
         }
     });
@@ -141,7 +153,9 @@ function IsRepeated(arr, id) {
 
 function StopLoading() {
     HideLoader();
-    $('#overlay').removeClass('active');
+    if (removeOverlay) {
+        $('#overlay').removeClass('active');
+    }
 }
 
 function HideLoader() { $('#loader').css('display', 'none'); }
@@ -155,10 +169,12 @@ async function UpdateAll() {
     function setLink(_link) {
         link = _link;
     }
-    let attributesToDelete = ['objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 'stIdCursoAsignacion', 
-                                'stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 'boVisto', 
-                                'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
-                                'allDay' ]
+    let attributesToDelete = [  
+        'objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 'stIdCursoAsignacion', 
+        'stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 'boVisto', 
+        'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
+        'allDay', 'stDescripcionMotivo' ]
+
     await RefreshLink().then(link => { setLink(link) })
     await fetch(link)
         .then(response => response.json())
@@ -305,3 +321,12 @@ function SetModalTitle(title) {
 function SetModalBody(body) {
     $('#popup-body').html(body);
 }  
+
+function ShowAnnouncement(title, body) { 
+    DisplayDummyTable();
+    SetModalTitle(title);
+    SetModalBody(body);
+    $('#modal').addClass('announcement');
+    openModal(modal);
+    ModalEventListeners();
+}

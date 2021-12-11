@@ -93,6 +93,7 @@ input:focus, textarea:focus, select:focus{
 #assignmentsTable tr:hover {
     background-color: #bebebe;
     color: var(--background-color);
+    transition: all 0.1s ease;
 }
 
 #assignmentsTable th {
