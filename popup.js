@@ -12,6 +12,7 @@ $('#search').on('input', function(event) { // On key pressed while search bar is
             }
         }
     });
+    $('#assignmentsTable tr').css('background-color', 'initial');
     ChangeEvenRowColor();
 });
 
@@ -165,7 +166,6 @@ function StopLoading() {
 function HideLoader() { $('#loader').css('display', 'none'); }
 
 function ChangeEvenRowColor() {
-    $('#assignmentsTable tr').css('background-color', 'initial');
     $('#assignmentsTable tr').filter(function() {
         return $(this).css('display') === 'table-row';
     }).even().css('background-color', 'var(--table-secondary-color)');
