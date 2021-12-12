@@ -30,21 +30,23 @@ body.dark {
 }
 
 #logo {
-    float: left;
+    left: 0;
     cursor: pointer;
 }
 
 #search {
-    margin: auto;
-    display: block;
-    width: 24rem;
+    position: absolute;
+    width: calc(70% - 32px);
+    left: calc(15% + 32px);
+    right: 15%;
+    top: 1rem;
 }
 
 #top-bar {
-    margin: 10px 0px 14px 0;
+    margin: 10px 0;
 }
 
-input:focus, textarea:focus, select:focus{
+input:focus, textarea:focus, select:focus {
     outline: none;
 }
 
@@ -84,10 +86,6 @@ input:focus, textarea:focus, select:focus{
 
 #assignmentsTable th:hover {
     background: var(--secondary-color);
-}
-
-#assignmentsTable tr:nth-child(even) {
-    background-color: var(--table-secondary-color);
 }
 
 #assignmentsTable tr:hover {

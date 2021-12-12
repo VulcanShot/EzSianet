@@ -6,12 +6,13 @@ $('#search').on('input', function(event) { // On key pressed while search bar is
             let normalizedColumnTitle = NormalizeDiactitics(td.innerText);
             let tr = $(td).parent();
             if (queryRegex.test(normalizedColumnTitle)) { // If search matches
-                tr.css('display', '');
+                tr.css('display', 'table-row');
             } else {
                 tr.css('display', 'none');
             }
         }
     });
+    ChangeEvenRowColor();
 });
 
 function NormalizeDiactitics(text) {
@@ -28,8 +29,8 @@ $('#schedule').click(function() { // Open schedule link
 });
 
 $('#logo').click(function(evt) {
-    $(document.body).toggleClass('dark')
-    if ($(document.body).hasClass('.dark')) { 
+    $(document.body).toggleClass('dark');
+    if ($(document.body).hasClass('dark')) { 
         chrome.storage.local.set({theme : 'dark'})
         evt.target.src = '/icons/icon_dark.png';
         return;
@@ -46,6 +47,7 @@ async function Main() {
     ShowFirstTimeMessage();
     await UpdateAll().then(async (items) => { await initStorageCache(items); })
     StopLoading();
+    ChangeEvenRowColor();
 }
 
 function SetTheme() {
@@ -97,9 +99,10 @@ function DisplayDummyTable() {
     }
 }
 
-let repeated = []; // ID's from repeated assignments
 async function initStorageCache(items) {
-    console.table(items);
+    // console.groupCollapsed('Assignments Table');
+    // console.table(items);
+    // console.groupEnd();
     let length = Object.keys(items).length;
 
     if (items.length == 0) {
@@ -116,10 +119,11 @@ async function initStorageCache(items) {
         return;
     }
     
+    let repeatedIds = [];
     for (let i = length - 1; i >= 0; i--) {
         var assignment = items[i];
         if (IsIdRepeated(items, assignment.id)) {
-            repeated.push(assignment.id);
+            repeatedIds.push(assignment.id);
         }
         if (new Date(assignment.end).getFullYear() !== new Date().getFullYear()) {
             continue;
@@ -127,9 +131,9 @@ async function initStorageCache(items) {
         AddToTable(assignment);
     }
 
-    if (repeated.length % 2 == 0) { repeated.length /= 2 }
+    if (repeatedIds.length % 2 == 0) { repeatedIds.length /= 2 }
     
-    repeated.forEach((assignmentId) => {
+    repeatedIds.forEach((assignmentId) => {
         var endElem = $('.' + assignmentId).eq(0); // Second element to be added, contains true END date
         var startElem = $('.' + assignmentId).eq(1); // First element to be added, contains true START date 
         endElem.children('.start').text(startElem.children('.start').text()); // Change starting date
@@ -159,6 +163,13 @@ function StopLoading() {
 }
 
 function HideLoader() { $('#loader').css('display', 'none'); }
+
+function ChangeEvenRowColor() {
+    $('#assignmentsTable tr').css('background-color', 'initial');
+    $('#assignmentsTable tr').filter(function() {
+        return $(this).css('display') === 'table-row';
+    }).even().css('background-color', 'var(--table-secondary-color)');
+}
 
 async function UpdateAll() {
     let data;
