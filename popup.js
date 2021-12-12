@@ -21,11 +21,11 @@ function NormalizeDiactitics(text) {
 }
 
 $('#schedule').click(function() { // Open schedule link
-    chrome.storage.sync.get('schedule', (link) => {
+    chrome.storage.sync.get('schedule', (result) => {
         if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError);
         }
-        window.open(link.schedule, '_blank');
+        window.open(result.schedule, '_blank');
     });
 });
 
@@ -40,28 +40,30 @@ $('#logo').click(function(evt) {
     evt.target.src = '/icons/icon_32.png';
 });
 
+let globalAssignments;
 let removeOverlay = true;
 Main();
 
 async function Main() {
     SetTheme();
     ShowFirstTimeMessage();
-    await UpdateAll().then(async (items) => { await initStorageCache(items); })
+    globalAssignments = await UpdateAll().then(items => { return items; })
+    initStorageCache(globalAssignments);
     StopLoading();
     ChangeEvenRowColor();
 }
 
 function SetTheme() {
-    chrome.storage.local.get('theme', (theme) => {
-        if (theme.theme !== 'dark') return
+    chrome.storage.local.get('theme', (result) => {
+        if (result.theme !== 'dark') return
         $(document.body).toggleClass('dark');
         $('#logo').attr('src', '/icons/icon_dark.png');
     });
 }
 
 function ShowFirstTimeMessage() {
-    chrome.storage.local.get('isFirstTime', (obj) => {
-        if (obj.isFirstTime !== true) return
+    chrome.storage.local.get('isFirstTime', (result) => {
+        if (result.isFirstTime !== true) return
         HideLoader();
         ShowAnnouncement(
             'Welcome to EzSianet',
@@ -100,11 +102,10 @@ function DisplayDummyTable() {
     }
 }
 
-async function initStorageCache(items) {
-    // console.groupCollapsed('Assignments Table');
-    // console.table(items);
-    // console.groupEnd();
-    let length = Object.keys(items).length;
+function initStorageCache(items) {
+    console.groupCollapsed('Assignments Table');
+    console.table(items);
+    console.groupEnd();
 
     if (items.length == 0) {
         ShowAnnouncement(
@@ -120,41 +121,28 @@ async function initStorageCache(items) {
         return;
     }
     
-    let repeatedIds = [];
-    for (let i = length - 1; i >= 0; i--) {
-        var assignment = items[i];
-        if (IsIdRepeated(items, assignment.id)) {
-            repeatedIds.push(assignment.id);
-        }
+    for (let i = items.length - 1; i >= 0; i--) {
+        let assignment = items[i];
         if (new Date(assignment.end).getFullYear() !== new Date().getFullYear()) {
+            delete items[i]; 
             continue;
         }
-        AddToTable(assignment);
+        let repetitions = items.filter(x => x.id === assignment.id);
+        if (repetitions.length === 2) {
+            let startIndex = items.indexOf(repetitions[0]);
+            let endIndex = items.indexOf(repetitions[1]);
+            items[startIndex].end = repetitions[1].end;
+            delete items[endIndex];
+        }
     }
 
-    if (repeatedIds.length % 2 == 0) { repeatedIds.length /= 2 }
-    
-    repeatedIds.forEach((assignmentId) => {
-        var endElem = $('.' + assignmentId).eq(0); // Second element to be added, contains true END date
-        var startElem = $('.' + assignmentId).eq(1); // First element to be added, contains true START date 
-        endElem.children('.start').text(startElem.children('.start').text()); // Change starting date
-        startElem.remove();
+    items.forEach((assignment) => {
+        AddToTable(assignment);
     });
 
     ModalEventListeners();
     sortTable($('#assignmentsTable').get(0), 6, -1);
 };
-
-function IsIdRepeated(arr, val) {
-    var count = 0;
-    arr.forEach((assignment) => {
-        if (assignment.id === val) {
-            count++;
-        }
-    });
-    if (count > 1) { return true; }
-    return false;
-}
 
 function StopLoading() {
     HideLoader();
@@ -191,9 +179,9 @@ async function UpdateAll() {
         .then(response => response.json())
         .then(json => setData(json))
         .then(() => {
-            data.forEach(assignment => { // For each assignment
-                attributesToDelete.forEach(attribute => { // For each attribute on attributesToDelete
-                    delete assignment[attribute]; // Delete attributes
+            data.forEach(assignment => {
+                attributesToDelete.forEach(attribute => {
+                    delete assignment[attribute];
                 });
             });
         })
@@ -203,20 +191,20 @@ async function UpdateAll() {
 
 function RefreshLink() { // Return an updated link in promise
     return new Promise((resolve, reject) => {
-        chrome.storage.sync.get('link', (link) => {
+        chrome.storage.sync.get('link', (result) => {
             if (chrome.runtime.lastError) {
                 return reject(chrome.runtime.lastError);
             }
-            let updatedLink = new URL(link.link);
+            let updatedLink = new URL(result.link);
             updatedLink.searchParams.set('end', encodeURI(new Date().toISOString()));
             chrome.storage.sync.set({link: updatedLink.href});
-            console.log(updatedLink.href)
+            console.log('URL: ' + updatedLink.href)
             resolve(updatedLink.href);
         });
     });
 }
 
-function AddToTable(obj) { // Add obj to table
+function AddToTable(obj) {
     let k = '<tbody>'
             k+= `<tr class="${obj.id}">`;
                 k+= '<td class="title">' + obj.title + '</td>'
