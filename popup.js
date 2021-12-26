@@ -1,15 +1,13 @@
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
     let query = NormalizeDiactitics(event.target.value);
-    $('#tableData td').each((index, td) => { // Each assignment
-        if (td.className == 'title') {
-            let queryRegex = new RegExp(query, 'i');
-            let normalizedColumnTitle = NormalizeDiactitics(td.innerText);
-            let tr = $(td).parent();
-            if (queryRegex.test(normalizedColumnTitle)) { // If search matches
-                tr.css('display', 'table-row');
-            } else {
-                tr.css('display', 'none');
-            }
+    $('#tableData td.title').each((index, td) => { // Each assignment
+        let queryRegex = new RegExp(query, 'i');
+        let normalizedColumnTitle = NormalizeDiactitics(td.innerText);
+        let tr = $(td).parent();
+        if (queryRegex.test(normalizedColumnTitle)) { // If search matches
+            tr.css('display', 'table-row');
+        } else {
+            tr.css('display', 'none');
         }
     });
     $('#assignmentsTable tr').css('background-color', 'initial');
