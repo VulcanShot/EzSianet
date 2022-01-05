@@ -1,8 +1,8 @@
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
-    let query = NormalizeDiactitics(event.target.value);
+    let query = RemoveDiacritics(event.target.value);
     $('#tableData td.title').each((index, td) => { // Each assignment
         let queryRegex = new RegExp(query, 'i');
-        let normalizedColumnTitle = NormalizeDiactitics(td.innerText);
+        let normalizedColumnTitle = RemoveDiacritics(td.innerText);
         let tr = $(td).parent();
         if (queryRegex.test(normalizedColumnTitle)) { // If search matches
             tr.css('display', 'table-row');
@@ -14,7 +14,7 @@ $('#search').on('input', function(event) { // On key pressed while search bar is
     ChangeEvenRowColor();
 });
 
-function NormalizeDiactitics(text) {
+function RemoveDiacritics(text) {
     return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
@@ -106,13 +106,19 @@ function initStorageCache(items) {
     console.groupEnd();
 
     if (items.length == 0) {
-        ShowAnnouncement(
-            'There was an error :C',
-            `<p>Please follow the instructions below:</p>
-            <p><b>1.</b> Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
-            <br><b>2.</b> Open your calendar and schedule on the website
-            <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
-        );
+        chrome.storage.sync.get('link', (result) => {
+            let subdomains = new URL(result.link).pathname;
+            subdomains = subdomains.substring(1);
+            let firstSubdomain = subdomains.split('/')[0];
+            let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
+            ShowAnnouncement(
+                'There was an error :C',
+                `<p>Please follow the instructions below:</p>
+                <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+                <br><b>2.</b> Open your calendar and schedule on the website
+                <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
+            );
+        });
         removeOverlay = false;
         $('#overlay').off('click');
         $('[data-close-button]').hide();
