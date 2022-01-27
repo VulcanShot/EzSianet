@@ -48,3 +48,17 @@ function ParseDate(str) {
 function ParseDateToInt(str) {
     return Date.parse(str);
 }
+
+function DateToTD(date, tdClass) { 
+    let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
+    
+    let parsedDate = ParseDate(date);
+    if (parsedDate === 'Today' || parsedDate === 'Tomorrow')
+        return `<td class="${tdClass}" style="color: ${fontcolor};">` + parsedDate + '</td>'
+
+    return `<td class="${tdClass}">` + parsedDate + '</td>'
+}
+
+function RemoveDiacritics(text) {
+    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
