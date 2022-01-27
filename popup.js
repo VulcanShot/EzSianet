@@ -46,7 +46,7 @@ async function Main() {
     SetTheme();
     ShowFirstTimeMessage();
     globalAssignments = await UpdateAll().then(items => { return items; })
-    initStorageCache(globalAssignments);
+    DisplayData(globalAssignments);
     StopLoading();
     ChangeEvenRowColor();
 }
@@ -100,53 +100,66 @@ function DisplayDummyTable() {
     }
 }
 
-function initStorageCache(items) {
+function DisplayData(assignemnts) {
     console.groupCollapsed('Assignments Table');
-    console.table(items);
+    console.table(assignemnts);
     console.groupEnd();
 
-    if (items.length == 0) {
-        chrome.storage.sync.get('link', (result) => {
-            let subdomains = new URL(result.link).pathname;
-            subdomains = subdomains.substring(1);
-            let firstSubdomain = subdomains.split('/')[0];
-            let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
-            ShowAnnouncement(
-                'There was an error :C',
-                `<p>Please follow the instructions below:</p>
-                <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
-                <br><b>2.</b> Open your calendar and schedule on the website
-                <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
-            );
-        });
-        removeOverlay = false;
-        $('#overlay').off('click');
-        $('[data-close-button]').hide();
+    if (assignemnts.length == 0) {
+        ShowNoAssignemntsError();
         return;
     }
     
-    for (let i = items.length - 1; i >= 0; i--) {
-        let assignment = items[i];
-        if (new Date(assignment.end).getFullYear() !== new Date().getFullYear()) {
-            delete items[i]; 
+    for (let i = assignemnts.length - 1; i >= 0; i--) {
+        if (new Date(assignemnts[i].end).getFullYear() !== new Date().getFullYear()) {
+            assignemnts.splice(i, 1); 
             continue;
         }
-        let repetitions = items.filter(x => x.id === assignment.id);
+        
+        let repetitions = assignemnts.filter(x => x.id === assignemnts[i].id);
         if (repetitions.length === 2) {
-            let startIndex = items.indexOf(repetitions[0]);
-            let endIndex = items.indexOf(repetitions[1]);
-            items[startIndex].end = repetitions[1].end;
-            delete items[endIndex];
+            let startIndex = assignemnts.indexOf(repetitions[0]);
+            let endIndex = assignemnts.indexOf(repetitions[1]);
+            assignemnts[startIndex].end = repetitions[1].end;
+            assignemnts.splice(endIndex, 1);
         }
     }
 
-    items.forEach((assignment) => {
+    if (assignemnts.length === 0) {
+        $('#message-if-empty').css('width', $('#message-if-empty').outerWidth());
+        $('#message-if-empty').show();
+        $('#schedule').css('margin', '0px');
+        $('#assignmentsTable').hide();
+        $('#search').hide();
+        return;
+    }
+
+    assignemnts.forEach((assignment) => {
         AddToTable(assignment);
     });
 
     ModalEventListeners();
     sortTable($('#assignmentsTable').get(0), 6, -1);
 };
+
+function ShowNoAssignemntsError() {
+    chrome.storage.sync.get('link', (result) => {
+        let subdomains = new URL(result.link).pathname;
+        subdomains = subdomains.substring(1);
+        let firstSubdomain = subdomains.split('/')[0];
+        let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
+        ShowAnnouncement(
+            'There was an error :C',
+            `<p>Please follow the instructions below:</p>
+            <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+            <br><b>2.</b> Open your calendar and schedule on the website
+            <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
+        );
+    });
+    removeOverlay = false;
+    $('#overlay').off('click');
+    $('[data-close-button]').hide();
+}
 
 function StopLoading() {
     HideLoader();
@@ -214,8 +227,8 @@ function AddToTable(obj) {
                 k+= '<td class="title">' + obj.title + '</td>'
                 k+= '<td class="subject">' + titleize(obj.DescripcionCurso) + '</td>'
                 k+= '<td class="type">' + ParseSianetType(obj.tipo) + '</td>'
-                k+= '<td class="start">' + ParseDate(obj.start) + '</td>'
-                k+= '<td class="end">' + ParseDate(obj.end); + '</td>'
+                k+= DateToTD(obj.start, 'start')
+                k+= DateToTD(obj.end, 'end')
                 k+= '<td class="more-info" data-modal-target="#modal">'
                 k+=     '<button class="more-info-button">&plus;</button>'
                 k+= '</td>'
@@ -226,53 +239,14 @@ function AddToTable(obj) {
     document.getElementById('tableData').innerHTML += k;
 }
 
-function ParseSianetType(str) { // i.e.: _TAREA = Tarea
-    let formattedString = str.substr(1, str.length);
-    formattedString = formattedString.replaceAll(/_/g, ' ');
-    return titleize(formattedString);
-}
-
-function titleize(str) { // i.e.: HELLO WORLD = Hello World
-    let upper = true
-    let newStr = ""
-    for (let i = 0, l = str.length; i < l; i++) {
-        if (str[i] ===   " ") {
-            upper = true
-            newStr += str[i]
-            continue
-        }
-        newStr += upper ? str[i].toUpperCase() : str[i].toLowerCase()
-        upper = false
-    }
-    return newStr
-}
-
-function ParseDate(str) {
-    let date = new Date(str);
-    date.setHours(0, 0, 0, 0);
-    let yesterday = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
-    yesterday.setHours(0, 0, 0, 0);
-    let today = new Date();
-    today.setHours(0, 0, 0, 0);
-    let tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-    tomorrow.setHours(0, 0, 0, 0);
-    
+function DateToTD(date, tdClass) { 
     let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
-    if (date.toString() == yesterday.toString()) {
-        return 'Yesterday';
-    }
-    if (date.toString() == today.toString()) {
-        return 'Today'.fontcolor(fontcolor);
-    }
-    if (date.toString() == tomorrow.toString()) {
-        return 'Tomorrow'.fontcolor(fontcolor);
-    }
+    
+    let parsedDate = ParseDate(date);
+    if (parsedDate === 'Today' || parsedDate === 'Tomorrow')
+        return `<td class="${tdClass}" style="color: ${fontcolor};">` + parsedDate + '</td>'
 
-    return new Intl.DateTimeFormat('en', { dateStyle: 'full' }).format(date);
-}
-
-function ParseDateToInt(str) {
-    return Date.parse(str);
+    return `<td class="${tdClass}">` + parsedDate + '</td>'
 }
 
 // MODAL
