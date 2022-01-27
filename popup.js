@@ -1,3 +1,7 @@
+let globalAssignments;
+let removeOverlay = true;
+let storage = {};
+
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
     let query = RemoveDiacritics(event.target.value);
     $('#tableData td.title').each((index, td) => { // Each assignment
@@ -14,17 +18,8 @@ $('#search').on('input', function(event) { // On key pressed while search bar is
     ChangeEvenRowColor();
 });
 
-function RemoveDiacritics(text) {
-    return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-}
-
-$('#schedule').click(function() { // Open schedule link
-    chrome.storage.sync.get('schedule', (result) => {
-        if (chrome.runtime.lastError) {
-            console.error(chrome.runtime.lastError);
-        }
-        window.open(result.schedule, '_blank');
-    });
+$('#schedule').click(function() {
+    window.open(storage.schedule, '_blank');
 });
 
 $('#logo').click(function(evt) {
@@ -38,18 +33,17 @@ $('#logo').click(function(evt) {
     evt.target.src = '/icons/icon_32.png';
 });
 
-let globalAssignments;
-let removeOverlay = true;
-Main();
-
-async function Main() {
+(async function() {
     SetTheme();
     ShowFirstTimeMessage();
+    await GetDataFromStorage().then(itemsFromChrome => {
+        Object.assign(storage, itemsFromChrome)
+    });
     globalAssignments = await UpdateAll().then(items => { return items; })
     DisplayData(globalAssignments);
     StopLoading();
     ChangeEvenRowColor();
-}
+})();
 
 function SetTheme() {
     chrome.storage.local.get('theme', (result) => {
@@ -76,28 +70,44 @@ function ShowFirstTimeMessage() {
     chrome.storage.local.set({'isFirstTime': false});
 }
 
-function AddDummyRow() {
-    let k = '<tbody>'
-            k+= `<tr>`;
-                k+= '<td class="title"></td>'
-                k+= '<td class="subject"></td>'
-                k+= '<td class="type"></td>'
-                k+= '<td class="start"></td>'
-                k+= '<td class="end"></td>'
-                k+= '<td class="more-info">'
-                k+=     '<button class="more-info-button"></button>'
-                k+= '</td>'
-                k+= `<td class="realEnd" style="display: none"></td>`
-            k+= '</tr>';
-        k+='</tbody>';
-        
-    document.getElementById('tableData').innerHTML += k;
+async function GetDataFromStorage() {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(null, (items) => {
+            if (chrome.runtime.lastError) {
+                return reject(chrome.runtime.lastError);
+            }
+            console.log(items);
+            resolve(items);
+        });
+    });
 }
 
-function DisplayDummyTable() {
-    for (let index = 0; index <= 4; index++) {
-        AddDummyRow();
+async function UpdateAll() {
+    let data;
+    function setData(dt) {
+        data = dt;
     }
+    let attributesToDelete = [ 'objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 
+        'stIdCursoAsignacion','stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 
+        'boVisto', 'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
+        'allDay', 'stDescripcionMotivo' ];
+    
+    let updatedLink = new URL(storage.link);
+    updatedLink.searchParams.set('end', encodeURI(new Date().toISOString()));
+    storage.link = updatedLink.href;
+
+    await fetch(storage.link)
+        .then(response => response.json())
+        .then(json => setData(json))
+        .then(() => {
+            data.forEach(assignment => {
+                attributesToDelete.forEach(attribute => {
+                    delete assignment[attribute];
+                });
+            });
+        })
+        .catch(error => console.error(error))
+    return await Promise.resolve(data);
 }
 
 function DisplayData(assignemnts) {
@@ -161,66 +171,6 @@ function ShowNoAssignemntsError() {
     $('[data-close-button]').hide();
 }
 
-function StopLoading() {
-    HideLoader();
-    if (removeOverlay) {
-        $('#overlay').removeClass('active');
-    }
-}
-
-function HideLoader() { $('#loader').css('display', 'none'); }
-
-function ChangeEvenRowColor() {
-    $('#assignmentsTable tr').filter(function() {
-        return $(this).css('display') === 'table-row';
-    }).even().css('background-color', 'var(--table-secondary-color)');
-}
-
-async function UpdateAll() {
-    let data;
-    let link;
-    function setData(dt) {
-        data = dt;
-    }
-    function setLink(_link) {
-        link = _link;
-    }
-    let attributesToDelete = [  
-        'objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 'stIdCursoAsignacion', 
-        'stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 'boVisto', 
-        'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
-        'allDay', 'stDescripcionMotivo' ]
-
-    await RefreshLink().then(link => { setLink(link) })
-    await fetch(link)
-        .then(response => response.json())
-        .then(json => setData(json))
-        .then(() => {
-            data.forEach(assignment => {
-                attributesToDelete.forEach(attribute => {
-                    delete assignment[attribute];
-                });
-            });
-        })
-        .catch(error => console.error(error))
-    return await Promise.resolve(data);
-}
-
-function RefreshLink() { // Return an updated link in promise
-    return new Promise((resolve, reject) => {
-        chrome.storage.sync.get('link', (result) => {
-            if (chrome.runtime.lastError) {
-                return reject(chrome.runtime.lastError);
-            }
-            let updatedLink = new URL(result.link);
-            updatedLink.searchParams.set('end', encodeURI(new Date().toISOString()));
-            chrome.storage.sync.set({link: updatedLink.href});
-            console.log('URL: ' + updatedLink.href)
-            resolve(updatedLink.href);
-        });
-    });
-}
-
 function AddToTable(obj) {
     let k = '<tbody>'
             k+= `<tr class="${obj.id}">`;
@@ -239,15 +189,20 @@ function AddToTable(obj) {
     document.getElementById('tableData').innerHTML += k;
 }
 
-function DateToTD(date, tdClass) { 
-    let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
-    
-    let parsedDate = ParseDate(date);
-    if (parsedDate === 'Today' || parsedDate === 'Tomorrow')
-        return `<td class="${tdClass}" style="color: ${fontcolor};">` + parsedDate + '</td>'
-
-    return `<td class="${tdClass}">` + parsedDate + '</td>'
+function StopLoading() {
+    HideLoader();
+    if (removeOverlay) {
+        $('#overlay').removeClass('active');
+    }
 }
+
+function ChangeEvenRowColor() {
+    $('#assignmentsTable tr').filter(function() {
+        return $(this).css('display') === 'table-row';
+    }).even().css('background-color', 'var(--table-secondary-color)');
+}
+
+function HideLoader() { $('#loader').css('display', 'none'); }
 
 // MODAL
 
@@ -306,4 +261,28 @@ function ShowAnnouncement(title, body) {
     $('#modal').addClass('announcement');
     openModal(modal);
     ModalEventListeners();
+}
+
+function DisplayDummyTable() {
+    for (let index = 0; index <= 4; index++) {
+        AddDummyRow();
+    }
+}
+
+function AddDummyRow() {
+    let k = '<tbody>'
+            k+= `<tr>`;
+                k+= '<td class="title"></td>'
+                k+= '<td class="subject"></td>'
+                k+= '<td class="type"></td>'
+                k+= '<td class="start"></td>'
+                k+= '<td class="end"></td>'
+                k+= '<td class="more-info">'
+                k+=     '<button class="more-info-button"></button>'
+                k+= '</td>'
+                k+= `<td class="realEnd" style="display: none"></td>`
+            k+= '</tr>';
+        k+='</tbody>';
+        
+    document.getElementById('tableData').innerHTML += k;
 }
