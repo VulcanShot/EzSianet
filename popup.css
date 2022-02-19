@@ -105,7 +105,7 @@ input:focus, textarea:focus, select:focus {
     color: var(--table-color);
 }
 
-.title, .subject {
+.subject {
     text-align: center;
 }
 
@@ -154,6 +154,32 @@ input:focus, textarea:focus, select:focus {
     overflow: auto;
 }
 
+.modal-header {
+    padding: 10px 10px 5px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.modal-body {
+    padding: 5px 10px 10px 10px;
+}
+
+[data-close-button] {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    background: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
 .modal.active {
     transform: translate(-50%, -50%) scale(1);
 }
@@ -165,33 +191,8 @@ input:focus, textarea:focus, select:focus {
     height: fit-content;
 }
 
-.modal.announcement .close-button {
+.modal.announcement [data-close-button] {
     color: white;
-}
-
-.modal-header {
-    padding: 10px 10px 5px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header .title {
-    font-size: 1.25rem;
-    font-weight: bold;
-}
-
-.modal-header .close-button {
-    cursor: pointer;
-    border: none;
-    outline: none;
-    background: none;
-    font-size: 1.25rem;
-    font-weight: bold;
-}
-
-.modal-body {
-    padding: 5px 10px 10px 10px;
 }
 
 #overlay {

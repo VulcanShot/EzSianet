@@ -76,7 +76,6 @@ async function GetDataFromStorage() {
             if (chrome.runtime.lastError) {
                 return reject(chrome.runtime.lastError);
             }
-            console.log(items);
             resolve(items);
         });
     });
@@ -172,21 +171,19 @@ function ShowNoAssignemntsError() {
 }
 
 function AddToTable(obj) {
-    let k = '<tbody>'
-            k+= `<tr class="${obj.id}">`;
-                k+= '<td class="title">' + obj.title + '</td>'
-                k+= '<td class="subject">' + titleize(obj.DescripcionCurso) + '</td>'
-                k+= '<td class="type">' + ParseSianetType(obj.tipo) + '</td>'
-                k+= DateToTD(obj.start, 'start')
-                k+= DateToTD(obj.end, 'end')
-                k+= '<td class="more-info" data-modal-target="#modal">'
-                k+=     '<button class="more-info-button">&plus;</button>'
-                k+= '</td>'
-                k+= `<td class="realEnd" style="display: none">${ParseDateToInt(obj.end)}</td>`
-            k+= '</tr>';
-        k+='</tbody>';
+    let k =  `<tr class="${obj.id}">
+                    <td class="title"> ${obj.title} </td>
+                    <td class="subject"> ${titleize(obj.DescripcionCurso)} </td>
+                    <td class="type"> ${ParseSianetType(obj.tipo)} </td>
+                    ${ DateToTD(obj.start, 'start') }
+                    ${ DateToTD(obj.end, 'end') }
+                    <td class="more-info" data-modal-target="#modal">
+                        <button class="more-info-button">&plus;</button>
+                    </td>
+                    <td class="realEnd" style="display: none">${ParseDateToInt(obj.end)}</td>
+            </tr>`;
         
-    document.getElementById('tableData').innerHTML += k;
+    $('#tableData').append(k);
 }
 
 function StopLoading() {
@@ -247,11 +244,11 @@ function closeModal(modal) {
 }
 
 function SetModalTitle(title) {
-    $('#popup-title').text(title);
+    $('.modal-title').text(title);
 }
 
 function SetModalBody(body) {
-    $('#popup-body').html(body);
+    $('.modal-body').html(body);
 }  
 
 function ShowAnnouncement(title, body) { 
@@ -270,19 +267,17 @@ function DisplayDummyTable() {
 }
 
 function AddDummyRow() {
-    let k = '<tbody>'
-            k+= `<tr>`;
-                k+= '<td class="title"></td>'
-                k+= '<td class="subject"></td>'
-                k+= '<td class="type"></td>'
-                k+= '<td class="start"></td>'
-                k+= '<td class="end"></td>'
-                k+= '<td class="more-info">'
-                k+=     '<button class="more-info-button"></button>'
-                k+= '</td>'
-                k+= `<td class="realEnd" style="display: none"></td>`
-            k+= '</tr>';
-        k+='</tbody>';
+    let k = `<tr>
+                <td class="title"></td>
+                <td class="subject"></td>
+                <td class="type"></td>
+                <td class="start"></td>
+                <td class="end"></td>
+                <td class="more-info">
+                   <button class="more-info-button"></button>
+                </td>
+                <td class="realEnd" style="display: none"></td>
+            </tr>`
         
-    document.getElementById('tableData').innerHTML += k;
+    $('#tableData').append(k);
 }
