@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="popup.css">
+        <script src="jquery-3.6.0.min.js"></script>
+        <script src="sorting.js"></script>
+        <script src="utils.js"></script>
+        <script src="popup.js" defer></script>
+        <title>EzSianet</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="top-bar">
+            <img id="logo" src="/icons/icon_32.png" alt="EzSianet" height="32">
+            <input id="search" class="filters" type="search" placeholder="Search..." autocomplete="off">
+        </div>
+        <div id="message-if-empty">You don't yet have any assignments this year :D</div>
+        <div id="schedule">Open my schedule</div>
+        <table id="assignmentsTable">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Subject</th>
+                    <th>Type</th>
+                    <th>Starting Date</th>
+                    <th>Deathline</th>
+                    <th>More Info</th>
+                </tr>
+            </thead>
+            <tbody id="tableData"></tbody>
+        </table>
+        <div id="credits">By Vulcan#2944</div>
+        <div class="modal" id="modal">
+            <div class="modal-header">
+                <div class="modal-title">Example Modal</div>
+                    <button data-close-button>&times;</button>
+                </div>
+                <div class="modal-body">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi fuga omnis voluptates incidunt amet asperiores repudiandae sunt cumque cupiditate harum adipisci eaque repellat ex soluta autem obcaecati veritatis quidem, commodi praesentium, rerum suscipit saepe? Vel inventore voluptate natus labore nam temporibus laboriosam deserunt facere doloremque atque odio nihil, amet officia nostrum cupiditate doloribus similique. Hic earum, aperiam deleniti tempora quae, consectetur quos voluptatum odit temporibus veniam fugiat dignissimos omnis aspernatur laudantium illum. Dolorum veritatis asperiores eius fugit saepe, blanditiis accusamus.</div>
+            </div>
+        <div id="loader"></div>
+        <div id="overlay" class="active"></div>
+    </body>
+</html>
