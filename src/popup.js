@@ -39,6 +39,10 @@ $('#logo').click(function(evt) {
     await GetDataFromStorage().then(itemsFromChrome => {
         if (itemsFromChrome.link === undefined) {
             ShowErrorModal(false);
+            return;
+        }
+        if (itemsFromChrome.schedule === undefined) {
+            ShowNoScheduleMessage();
         }
         Object.assign(storage, itemsFromChrome)
     });
@@ -69,8 +73,27 @@ function ShowFirstTimeMessage() {
              <br>Remember that the information is updated automatically</p>
              <br>You can toggle between light and dark UI modes by clicking on the logo.`
         );
+        DisplayDummyTable()
     });
     chrome.storage.local.set({'isFirstTime': false});
+}
+
+function ShowNoScheduleMessage() {
+    chrome.storage.sync.get('link', (result) => {
+        let firstSubdomain;
+        let subdomains = new URL(result.link).pathname;
+        subdomains = subdomains.substring(1);
+        firstSubdomain = subdomains.split('/')[0];
+        
+        let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
+        ShowAnnouncement(
+            'Your schedule could not be loaded :C',
+            `<p>Please follow the instructions below:</p>
+            <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+            <br><b>2.</b> Open your schedule on the website
+            <br><br>If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord: Vulcan#2944</p>`
+        );
+    });
 }
 
 async function GetDataFromStorage() {
@@ -173,9 +196,9 @@ function ShowErrorModal(customURL = true) {
             <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
         );
     });
-    removeOverlay = false;
     $('#overlay').off('click');
     $('[data-close-button]').hide();
+    DisplayDummyTable()
 }
 
 function AddToTable(obj) {
@@ -260,12 +283,12 @@ function SetModalBody(body) {
 }  
 
 function ShowAnnouncement(title, body) { 
-    DisplayDummyTable();
     SetModalTitle(title);
     SetModalBody(body);
     $('#modal').addClass('announcement');
     openModal(modal);
     ModalEventListeners();
+    removeOverlay = false;
 }
 
 function DisplayDummyTable() {
