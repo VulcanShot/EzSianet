@@ -37,6 +37,9 @@ $('#logo').click(function(evt) {
     SetTheme();
     ShowFirstTimeMessage();
     await GetDataFromStorage().then(itemsFromChrome => {
+        if (itemsFromChrome.link === undefined) {
+            ShowErrorModal(false);
+        }
         Object.assign(storage, itemsFromChrome)
     });
     globalAssignments = await UpdateAll().then(items => { return items; })
@@ -115,7 +118,7 @@ function DisplayData(assignemnts) {
     console.groupEnd();
 
     if (assignemnts.length == 0) {
-        ShowNoAssignemntsError();
+        ShowErrorModal();
         return;
     }
     
@@ -151,11 +154,16 @@ function DisplayData(assignemnts) {
     sortTable($('#assignmentsTable').get(0), 6, -1);
 };
 
-function ShowNoAssignemntsError() {
+function ShowErrorModal(customURL = true) {
     chrome.storage.sync.get('link', (result) => {
-        let subdomains = new URL(result.link).pathname;
-        subdomains = subdomains.substring(1);
-        let firstSubdomain = subdomains.split('/')[0];
+        let firstSubdomain;
+        if (customURL) {
+            let subdomains = new URL(result.link).pathname;
+            subdomains = subdomains.substring(1);
+            firstSubdomain = subdomains.split('/')[0];    
+        }
+        else firstSubdomain = "your_school";
+        
         let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
         ShowAnnouncement(
             'There was an error :C',
