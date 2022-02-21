@@ -37,13 +37,6 @@ $('#logo').click(function(evt) {
     SetTheme();
     ShowFirstTimeMessage();
     await GetDataFromStorage().then(itemsFromChrome => {
-        if (itemsFromChrome.link === undefined) {
-            ShowErrorModal(false);
-            return;
-        }
-        if (itemsFromChrome.schedule === undefined) {
-            ShowNoScheduleMessage();
-        }
         Object.assign(storage, itemsFromChrome)
     });
     globalAssignments = await FetchData().then(items => { return items; })
@@ -78,7 +71,7 @@ function ShowFirstTimeMessage() {
     chrome.storage.local.set({'isFirstTime': false});
 }
 
-function ShowNoScheduleMessage() {
+function ShowScheduleErrorModal() {
     chrome.storage.sync.get('link', (result) => {
         let firstSubdomain;
         let subdomains = new URL(result.link).pathname;
@@ -116,6 +109,11 @@ async function FetchData() {
         'stIdCursoAsignacion','stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 
         'boVisto', 'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
         'allDay', 'stDescripcionMotivo' ];
+
+    if (storage.link === undefined) {
+        ShowErrorModal(false);
+        return await Promise.reject('There is no data URL');
+    }
     
     let updatedLink = new URL(storage.link);
     updatedLink.searchParams.set('end', encodeURI(new Date().toISOString()));
@@ -173,6 +171,10 @@ function DisplayData() {
     globalAssignments.forEach((assignment) => {
         AddToTable(assignment);
     });
+
+    if (storage.schedule === undefined) {
+        ShowScheduleErrorModal();
+    }
 
     ModalEventListeners();
     sortTable($('#assignmentsTable').get(0), 6, -1);
