@@ -19,6 +19,10 @@ $('#search').on('input', function(event) { // On key pressed while search bar is
 });
 
 $('#schedule').click(function() {
+    if (storage.schedule === undefined) {
+        ShowScheduleErrorModal();
+        return;
+    }
     window.open(storage.schedule, '_blank');
 });
 
@@ -80,7 +84,7 @@ function ShowScheduleErrorModal() {
         
         let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
         ShowAnnouncement(
-            'Your schedule could not be loaded :C',
+            'Your schedule could not be loaded',
             `<p>Please follow the instructions below:</p>
             <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
             <br><b>2.</b> Open your schedule on the website
@@ -173,10 +177,6 @@ function DisplayData() {
         AddToTable(assignment);
     });
 
-    if (storage.schedule === undefined) {
-        ShowScheduleErrorModal();
-    }
-
     ModalEventListeners();
     sortTable($('#assignmentsTable').get(0), 6, -1);
 };
@@ -193,7 +193,7 @@ function ShowErrorModal(customURL = true) {
         
         let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
         ShowAnnouncement(
-            'There was an error :C',
+            'There was an error',
             `<p>Please follow the instructions below:</p>
             <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
             <br><b>2.</b> Open your calendar and schedule on the website
