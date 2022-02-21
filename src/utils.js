@@ -1,7 +1,14 @@
+function ParseSianetSubject(str) {
+    let parsed = str.trim();
+    if (parsed === "") {
+        parsed = "School's Statement"
+    }
+    return titleize(parsed);
+}
+
 function ParseSianetType(str) { // i.e.: _TAREA = Tarea
-    let formattedString = str.substr(1, str.length);
-    formattedString = formattedString.replaceAll(/_/g, ' ');
-    return titleize(formattedString);
+    let parsed = str.replaceAll(/_/g, ' ');
+    return titleize(parsed);
 }
 
 function titleize(str) { // i.e.: HELLO WORLD = Hello World
@@ -43,10 +50,6 @@ function ParseDate(str) {
     }
 
     return new Intl.DateTimeFormat('en', { dateStyle: 'full' }).format(date);
-}
-
-function ParseDateToInt(str) {
-    return Date.parse(str);
 }
 
 function DateToTD(date, tdClass) { 

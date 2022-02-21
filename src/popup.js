@@ -135,32 +135,32 @@ async function UpdateAll() {
     return await Promise.resolve(data);
 }
 
-function DisplayData(assignemnts) {
+function DisplayData() {
     console.groupCollapsed('Assignments Table');
-    console.table(assignemnts);
+    console.table(globalAssignments);
     console.groupEnd();
 
-    if (assignemnts.length == 0) {
+    if (globalAssignments.length == 0) {
         ShowErrorModal();
         return;
     }
     
-    for (let i = assignemnts.length - 1; i >= 0; i--) {
-        if (new Date(assignemnts[i].end).getFullYear() !== new Date().getFullYear()) {
-            assignemnts.splice(i, 1); 
+    for (let i = globalAssignments.length - 1; i >= 0; i--) {
+        if (new Date(globalAssignments[i].end).getFullYear() !== new Date().getFullYear()) {
+            globalAssignments.splice(i, 1); 
             continue;
         }
         
-        let repetitions = assignemnts.filter(x => x.id === assignemnts[i].id);
+        let repetitions = globalAssignments.filter(x => x.id === globalAssignments[i].id);
         if (repetitions.length === 2) {
-            let startIndex = assignemnts.indexOf(repetitions[0]);
-            let endIndex = assignemnts.indexOf(repetitions[1]);
-            assignemnts[startIndex].end = repetitions[1].end;
-            assignemnts.splice(endIndex, 1);
+            let startIndex = globalAssignments.indexOf(repetitions[0]);
+            let endIndex = globalAssignments.indexOf(repetitions[1]);
+            globalAssignments[startIndex].end = repetitions[1].end;
+            globalAssignments.splice(endIndex, 1);
         }
     }
 
-    if (assignemnts.length === 0) {
+    if (globalAssignments.length === 0) {
         $('#message-if-empty').css('width', $('#message-if-empty').outerWidth());
         $('#message-if-empty').show();
         $('#schedule').css('margin', '0px');
@@ -169,7 +169,7 @@ function DisplayData(assignemnts) {
         return;
     }
 
-    assignemnts.forEach((assignment) => {
+    globalAssignments.forEach((assignment) => {
         AddToTable(assignment);
     });
 
@@ -203,15 +203,15 @@ function ShowErrorModal(customURL = true) {
 
 function AddToTable(obj) {
     let k =  `<tr class="${obj.id}">
-                    <td class="title"> ${obj.title} </td>
-                    <td class="subject"> ${titleize(obj.DescripcionCurso)} </td>
-                    <td class="type"> ${ParseSianetType(obj.tipo)} </td>
+                    <td class="title"> ${obj.title.trim()} </td>
+                    <td class="subject"> ${ ParseSianetSubject(obj.DescripcionCurso) } </td>
+                    <td class="type"> ${ ParseSianetType(obj.tipo) } </td>
                     ${ DateToTD(obj.start, 'start') }
                     ${ DateToTD(obj.end, 'end') }
                     <td class="more-info" data-modal-target="#modal">
                         <button class="more-info-button">&plus;</button>
                     </td>
-                    <td class="realEnd" style="display: none">${ParseDateToInt(obj.end)}</td>
+                    <td class="realEnd" style="display: none">${ Date.parse(obj.end) }</td>
             </tr>`;
         
     $('#tableData').append(k);
