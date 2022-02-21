@@ -137,6 +137,7 @@ async function FetchData() {
 
 function DisplayData() {
     console.groupCollapsed('Assignments Table');
+    console.log("Source: " + storage.link);
     console.table(globalAssignments);
     console.groupEnd();
 
