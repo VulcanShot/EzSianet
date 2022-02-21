@@ -46,7 +46,7 @@ $('#logo').click(function(evt) {
         }
         Object.assign(storage, itemsFromChrome)
     });
-    globalAssignments = await UpdateAll().then(items => { return items; })
+    globalAssignments = await FetchData().then(items => { return items; })
     DisplayData(globalAssignments);
     StopLoading();
     ChangeEvenRowColor();
@@ -107,7 +107,7 @@ async function GetDataFromStorage() {
     });
 }
 
-async function UpdateAll() {
+async function FetchData() {
     let data;
     function setData(dt) {
         data = dt;
