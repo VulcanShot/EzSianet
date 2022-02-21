@@ -40,7 +40,7 @@ $('#logo').click(function(evt) {
         Object.assign(storage, itemsFromChrome)
     });
     globalAssignments = await FetchData().then(items => { return items; })
-    DisplayData(globalAssignments);
+    DisplayData();
     StopLoading();
     ChangeEvenRowColor();
 })();
@@ -145,10 +145,11 @@ function DisplayData() {
     }
     
     for (let i = globalAssignments.length - 1; i >= 0; i--) {
-        if (new Date(globalAssignments[i].end).getFullYear() !== new Date().getFullYear()) {
-            globalAssignments.splice(i, 1); 
-            continue;
-        }
+        // IMPORTANT: Apparently Sianet stores assignments from each year in a unique URL
+        // if (new Date(globalAssignments[i].end).getFullYear() !== new Date().getFullYear()) {
+        //     globalAssignments.splice(i, 1); 
+        //     continue;
+        // }
         
         let repetitions = globalAssignments.filter(x => x.id === globalAssignments[i].id);
         if (repetitions.length === 2) {
