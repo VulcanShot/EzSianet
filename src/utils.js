@@ -65,3 +65,12 @@ function DateToTD(date, tdClass) {
 function RemoveDiacritics(text) {
     return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
+
+function FirstSubdomainFromURLString(url) { 
+    let subdomains = new URL(url).pathname.substring(1);
+    return subdomains.split('/')[0];  
+}
+
+function CustomSianetURL(url) {
+    return `https://www.sianet.edu.pe/${ FirstSubdomainFromURLString(url) }/`;
+}

@@ -26,15 +26,34 @@ $('#schedule').click(function() {
     window.open(storage.schedule, '_blank');
 });
 
-$('#logo').click(function(evt) {
+function ShowScheduleErrorModal() {
+    chrome.storage.sync.get('link', (result) => {
+        let sianetURL = CustomSianetURL(result.link);
+        ShowAnnouncement(
+            'Your schedule could not be loaded',
+            `<p>Please follow the instructions below:</p>
+            <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+            <br><b>2.</b> Open your schedule on the website
+            <br><br>If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord: Vulcan#2944</p>`
+        );
+    });
+}
+
+$('#mode').click(function() {
     $(document.body).toggleClass('dark');
     if ($(document.body).hasClass('dark')) { 
         chrome.storage.local.set({theme : 'dark'})
-        evt.target.src = '/icons/icon_dark.png';
         return;
     }
     chrome.storage.local.set({theme : 'light'})
-    evt.target.src = '/icons/icon_32.png';
+});
+
+$('#logo').click(function() {
+    if (storage.link === undefined) {
+        ShowErrorModal(false);
+        return;
+    }
+    window.open(CustomSianetURL(storage.link), '_blank');
 });
 
 (async function() {
@@ -51,9 +70,8 @@ $('#logo').click(function(evt) {
 
 function SetTheme() {
     chrome.storage.local.get('theme', (result) => {
-        if (result.theme !== 'dark') return
+        if (result.theme !== 'dark') return;
         $(document.body).toggleClass('dark');
-        $('#logo').attr('src', '/icons/icon_dark.png');
     });
 }
 
@@ -73,24 +91,6 @@ function ShowFirstTimeMessage() {
         DisplayDummyTable()
     });
     chrome.storage.local.set({'isFirstTime': false});
-}
-
-function ShowScheduleErrorModal() {
-    chrome.storage.sync.get('link', (result) => {
-        let firstSubdomain;
-        let subdomains = new URL(result.link).pathname;
-        subdomains = subdomains.substring(1);
-        firstSubdomain = subdomains.split('/')[0];
-        
-        let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
-        ShowAnnouncement(
-            'Your schedule could not be loaded',
-            `<p>Please follow the instructions below:</p>
-            <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
-            <br><b>2.</b> Open your schedule on the website
-            <br><br>If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord: Vulcan#2944</p>`
-        );
-    });
 }
 
 async function GetDataFromStorage() {
@@ -115,7 +115,7 @@ async function FetchData() {
         'allDay', 'stDescripcionMotivo' ];
 
     if (storage.link === undefined) {
-        ShowErrorModal(false);
+        ShowErrorModal();
         return await Promise.reject('There is no data URL');
     }
     
@@ -144,7 +144,7 @@ function DisplayData() {
     console.groupEnd();
 
     if (globalAssignments.length == 0) {
-        ShowErrorModal();
+        ShowErrorModal(true);
         return;
     }
     
@@ -178,20 +178,17 @@ function DisplayData() {
     });
 
     ModalEventListeners();
-    sortTable($('#assignmentsTable').get(0), 6, -1);
+    sortTable($('#assignmentsTable').get(0), 5, -1);
 };
 
-function ShowErrorModal(customURL = true) {
+function ShowErrorModal(customURL = false) {
     chrome.storage.sync.get('link', (result) => {
-        let firstSubdomain;
+        let sianetURL;
         if (customURL) {
-            let subdomains = new URL(result.link).pathname;
-            subdomains = subdomains.substring(1);
-            firstSubdomain = subdomains.split('/')[0];    
+            sianetURL = CustomSianetURL(result.link);
         }
-        else firstSubdomain = "your_school";
-        
-        let sianetURL = `https://www.sianet.edu.pe/${firstSubdomain}/`;
+        else sianetURL = "https://www.sianet.edu.pe/your_school/";
+
         ShowAnnouncement(
             'There was an error',
             `<p>Please follow the instructions below:</p>
@@ -212,10 +209,10 @@ function AddToTable(obj) {
                     <td class="type"> ${ ParseSianetType(obj.tipo) } </td>
                     ${ DateToTD(obj.start, 'start') }
                     ${ DateToTD(obj.end, 'end') }
+                    <td class="real-end">${ Date.parse(obj.end) }</td>
                     <td class="more-info" data-modal-target="#modal">
                         <button class="more-info-button">&plus;</button>
                     </td>
-                    <td class="realEnd" style="display: none">${ Date.parse(obj.end) }</td>
             </tr>`;
         
     $('#tableData').append(k);

@@ -15,9 +15,14 @@ body {
     --table-color: black;
     --header-color: #f2f2f2;
     --table-secondary-color: #f2f2f2;
+    --table-border-radius: 8px;
+    --logo-url: url('/icons/icon_32.png');
+    --mode-url: url('/icons/light_mode.png');
+    --mode-alt: 'Light Mode';
 
     background-color: var(--background-color);
     transition: 0.1s;
+    margin: 0 10px;
 }
 
 body.dark {
@@ -27,23 +32,46 @@ body.dark {
     --table-color: #f2f2f2;
     --header-color: var(--background-color);
     --table-secondary-color: #767a7d;
+    --logo-url: url('/icons/icon_dark.png');
+    --mode-url: url('/icons/dark_mode.png');
+    --mode-alt: 'Dark Mode';
+}
+
+#logo, #mode {
+    position: absolute;
+    top: 0;
+    cursor: pointer;
+    height: 32px;
 }
 
 #logo {
     left: 0;
-    cursor: pointer;
+    content: var(--logo-url);
 }
 
 #search {
-    position: absolute;
-    width: calc(70% - 32px);
-    left: calc(15% + 32px);
-    right: 15%;
-    top: 1rem;
+    font-size: 1rem;
+    margin: 0 auto;
+    width: 80%;
+    border: none;
+    text-align: center;
+    background-color: transparent;
+    color: var(--table-color);
 }
 
+#mode {
+    right: 0;
+    content: var(--mode-url);
+    alt: var(--mode-alt);
+}
+    
 #top-bar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
     margin: 10px 0;
+    height: max(32px, 1rem);
 }
 
 input:focus, textarea:focus, select:focus {
@@ -52,7 +80,7 @@ input:focus, textarea:focus, select:focus {
 
 #schedule {
     width: 100%;
-    margin: 0 0 10px 0;
+    margin-bottom: 10px;
     border: 3px solid var(--main-color);
     border-radius: 5px;
     background: var(--main-color);
@@ -76,7 +104,6 @@ input:focus, textarea:focus, select:focus {
 }
 
 #assignmentsTable td, #assignmentsTable th {
-    border: 1px solid #ddd;
     padding: 8px;
 }
 
@@ -118,6 +145,27 @@ input:focus, textarea:focus, select:focus {
     font-size: large;
     font-weight: 600;
     color: var(--main-color);
+    cursor: pointer;
+}
+
+.real-end {
+    display: none;
+}
+
+th:first-of-type {
+    border-top-left-radius: var(--table-border-radius);
+}
+
+th:last-of-type {
+    border-top-right-radius: var(--table-border-radius);
+}
+
+tr:last-of-type td:first-of-type {
+    border-bottom-left-radius: var(--table-border-radius);
+}
+
+tr:last-of-type td:last-of-type {
+    border-bottom-right-radius: var(--table-border-radius);
 }
 
 #message-if-empty {
@@ -130,13 +178,9 @@ input:focus, textarea:focus, select:focus {
 }
 
 #credits {
-    margin-top: 10px;
+    margin: 10px 0;
     text-align: center;
     color: var(--table-color);
-}
-
-.more-info {
-    cursor: pointer;
 }
 
 .modal {
@@ -190,10 +234,6 @@ input:focus, textarea:focus, select:focus {
     color: white;
     width: fit-content;
     height: fit-content;
-}
-
-.modal.announcement [data-close-button] {
-    color: white;
 }
 
 #overlay {
@@ -255,4 +295,11 @@ input:focus, textarea:focus, select:focus {
   
 ::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color); 
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance:none;
 }
