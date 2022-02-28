@@ -56,6 +56,20 @@ $('#logo').click(function() {
     window.open(CustomSianetURL(storage.link), '_blank');
 });
 
+$('.modal').scroll(function() {
+    
+    var scrollTop = $(this).scrollTop();
+
+    $('.modal-header').css({
+        opacity: function() {
+            var elementHeight = $(this).height(),
+            opacity = ((elementHeight - scrollTop) / elementHeight);
+            return opacity;
+        }
+    });
+
+});
+
 (async function() {
     SetTheme();
     ShowFirstTimeMessage();

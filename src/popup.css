@@ -15,7 +15,7 @@ body {
     --table-color: black;
     --header-color: #f2f2f2;
     --table-secondary-color: #f2f2f2;
-    --table-border-radius: 8px;
+    --default-border-radius: 5px;
     --logo-url: url('/icons/icon_32.png');
     --mode-url: url('/icons/light_mode.png');
     --mode-alt: 'Light Mode';
@@ -82,7 +82,7 @@ input:focus, textarea:focus, select:focus {
     width: 100%;
     margin-bottom: 10px;
     border: 3px solid var(--main-color);
-    border-radius: 5px;
+    border-radius: var(--default-border-radius);
     background: var(--main-color);
     color: var(--background-color);
     font-weight: bold;
@@ -153,19 +153,19 @@ input:focus, textarea:focus, select:focus {
 }
 
 th:first-of-type {
-    border-top-left-radius: var(--table-border-radius);
+    border-top-left-radius: var(--default-border-radius);
 }
 
 th:last-of-type {
-    border-top-right-radius: var(--table-border-radius);
+    border-top-right-radius: var(--default-border-radius);
 }
 
 tr:last-of-type td:first-of-type {
-    border-bottom-left-radius: var(--table-border-radius);
+    border-bottom-left-radius: var(--default-border-radius);
 }
 
 tr:last-of-type td:last-of-type {
-    border-bottom-right-radius: var(--table-border-radius);
+    border-bottom-right-radius: var(--default-border-radius);
 }
 
 #message-if-empty {
@@ -199,10 +199,15 @@ tr:last-of-type td:last-of-type {
 }
 
 .modal-header {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    left: 0;
     padding: 10px 10px 5px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background-color: white;
 }
 
 .modal-title {
