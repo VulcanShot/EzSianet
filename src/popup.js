@@ -134,6 +134,7 @@ async function FetchData() {
     }
     
     let updatedLink = new URL(storage.link);
+    updatedLink.searchParams.set('start', encodeURI(new Date(2010).toISOString()));
     updatedLink.searchParams.set('end', encodeURI(new Date().toISOString()));
     storage.link = updatedLink.href;
 
