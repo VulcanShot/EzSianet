@@ -207,7 +207,7 @@ tr:last-of-type td:last-of-type {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: white;
+    background-color: var(--main-color);
 }
 
 .modal-title {
