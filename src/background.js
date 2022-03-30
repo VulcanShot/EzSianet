@@ -14,7 +14,7 @@ function ListenToWebRequests() {
 }
 
 function CheckWebRequests(details) {
-    let independentPathName = new URL(url).pathname.split('/').slice(2).join('/');
+    let independentPathName = new URL(details.url).pathname.split('/').slice(2).join('/');
 
     switch (independentPathName) {
         case 'Academico/CalendarioAcademico/List':

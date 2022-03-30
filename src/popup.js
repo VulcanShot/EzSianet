@@ -4,7 +4,7 @@ let storage = {};
 
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
     let query = RemoveDiacritics(event.target.value);
-    $('#assignmentsTable tbody td.title').each((index, td) => { // Each assignment
+    $('body table tbody td.title').each((index, td) => { // Each assignment
         let queryRegex = new RegExp(query, 'i');
         let normalizedColumnTitle = RemoveDiacritics(td.innerText);
         let tr = $(td).parent();
@@ -14,7 +14,7 @@ $('#search').on('input', function(event) { // On key pressed while search bar is
             tr.css('display', 'none');
         }
     });
-    $('#assignmentsTable tr').css('background-color', 'initial');
+    $('body table tr').css('background-color', 'initial');
     ChangeEvenRowColor();
 });
 
@@ -183,7 +183,7 @@ function DisplayData() {
         $('#message-if-empty').css('width', $('#message-if-empty').outerWidth());
         $('#message-if-empty').show();
         $('#schedule').css('margin', '0px');
-        $('#assignmentsTable').hide();
+        $('body table').hide();
         $('#search').hide();
         return;
     }
@@ -193,7 +193,7 @@ function DisplayData() {
     });
 
     ModalEventListeners();
-    sortTable($('#assignmentsTable').get(0), 5, -1);
+    sortTable($('body table').get(0), 5, -1);
 };
 
 function ShowErrorModal(customURL = false) {
@@ -230,7 +230,7 @@ function AddToTable(obj) {
                     </td>
             </tr>`;
         
-    $('#assignmentsTable tbody').append(k);
+    $('body table tbody').append(k);
 }
 
 function StopLoading() {
@@ -241,7 +241,7 @@ function StopLoading() {
 }
 
 function ChangeEvenRowColor() {
-    $('#assignmentsTable tr').filter(function() {
+    $('body table tr').filter(function() {
         return $(this).css('display') === 'table-row';
     }).even().css('background-color', 'var(--table-secondary-color)');
 }
@@ -326,5 +326,5 @@ function AddDummyRow() {
                 <td class="realEnd" style="display: none"></td>
             </tr>`
         
-    $('#assignmentsTable tbody').append(k);
+    $('body table tbody').append(k);
 }
