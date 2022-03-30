@@ -4,7 +4,7 @@ let storage = {};
 
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
     let query = RemoveDiacritics(event.target.value);
-    $('#tableData td.title').each((index, td) => { // Each assignment
+    $('#assignmentsTable tbody td.title').each((index, td) => { // Each assignment
         let queryRegex = new RegExp(query, 'i');
         let normalizedColumnTitle = RemoveDiacritics(td.innerText);
         let tr = $(td).parent();
@@ -230,7 +230,7 @@ function AddToTable(obj) {
                     </td>
             </tr>`;
         
-    $('#tableData').append(k);
+    $('#assignmentsTable tbody').append(k);
 }
 
 function StopLoading() {
@@ -326,5 +326,5 @@ function AddDummyRow() {
                 <td class="realEnd" style="display: none"></td>
             </tr>`
         
-    $('#tableData').append(k);
+    $('#assignmentsTable tbody').append(k);
 }

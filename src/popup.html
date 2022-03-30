@@ -4,6 +4,7 @@
         <link rel="stylesheet" href="popup.css">
         <script src="jquery-3.6.0.slim.min.js"></script>
         <script src="sorting.js"></script>
+        <script src="locales.js" defer></script>
         <script src="utils.js" defer></script>
         <script src="popup.js" defer></script>
         <title>EzSianet</title>
@@ -12,32 +13,32 @@
     <body>
         <div id="top-bar">
             <img id="logo" alt="EzSianet">
-            <input id="search" type="search" placeholder="Search..." autocomplete="off">
+            <input id="search" type="search" autocomplete="off">
             <img id="mode">
         </div>
-        <div id="message-if-empty">You don't yet have any assignments this year :D</div>
-        <button id="schedule" type="button">Open my schedule</button>
-        <table id="assignmentsTable">
+        <div id="message-if-empty"></div>
+        <button id="schedule" type="button"></button>
+        <table>
             <thead>
                 <tr>
-                    <th>Title</th>
-                    <th>Subject</th>
-                    <th>Type</th>
-                    <th>Starting Date</th>
-                    <th>Deathline</th>
-                    <th>More Info</th>
+                    <th id="table-title"></th>
+                    <th id="table-subject"></th>
+                    <th id="table-type"></th>
+                    <th id="table-starting-date"></th>
+                    <th id="table-deathline"></th>
+                    <th id="table-more-info"></th>
                 </tr>
             </thead>
-            <tbody id="tableData"></tbody>
+            <tbody></tbody>
         </table>
-        <div id="credits">By Vulcan#2944</div>
+        <div id="credits"></div>
         <div class="modal" id="modal">
             <div class="modal-header">
                 <div class="modal-title">Lorem Ipsum</div>
                 <button data-close-button>&times;</button>
             </div>
             <div class="modal-body">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Excepturi fuga omnis voluptates incidunt amet asperiores repudiandae sunt cumque cupiditate harum adipisci eaque repellat ex soluta autem obcaecati veritatis quidem, commodi praesentium, rerum suscipit saepe? Vel inventore voluptate natus labore nam temporibus laboriosam deserunt facere doloremque atque odio nihil, amet officia nostrum cupiditate doloribus similique. Hic earum, aperiam deleniti tempora quae, consectetur quos voluptatum odit temporibus veniam fugiat dignissimos omnis aspernatur laudantium illum. Dolorum veritatis asperiores eius fugit saepe, blanditiis accusamus.</div>
-            </div>
+        </div>
         <div id="loader"></div>
         <div id="overlay" class="active"></div>
     </body>

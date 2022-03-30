@@ -1,0 +1,32 @@
+{
+    "search": {
+        "message": "Buscar"
+    },
+    "no_assignments_message": {
+        "message": "You don't yet have any assignments this year :D"
+    },
+    "open_schedule": {
+        "message": "Abrir mi horario"
+    },
+    "assignment_title": {
+        "message": "Título"
+    },
+    "assignment_subject": {
+        "message": "Asignatura"
+    },
+    "assignment_type": {
+        "message": "Tipo"
+    },
+    "assignment_starting_date": {
+        "message": "Fecha de Inicio"
+    },
+    "assignment_deathline": {
+        "message": "Fecha de Entrega"
+    },
+    "assignment_more_info": {
+        "message": "Más Información"
+    },
+    "credits": {
+        "message": "Por"
+    }
+}

@@ -98,37 +98,37 @@ input:focus, textarea:focus, select:focus {
     background: var(--secondary-color);
 }
 
-#assignmentsTable {
+body table {
     border-collapse: collapse;
     width: 100%;
 }
 
-#assignmentsTable td, #assignmentsTable th {
+body table td, body table th {
     padding: 8px;
 }
 
-#assignmentsTable th {
+body table th {
     transition: all 0.3s ease;
 }
 
-#assignmentsTable th:hover {
+body table th:hover {
     background: var(--secondary-color);
 }
 
-#assignmentsTable tr:hover {
+body table tr:hover {
     background-color: #bebebe !important;
     color: var(--background-color);
     transition: all 0.1s ease;
 }
 
-#assignmentsTable th {
+body table th {
     padding: 8px 18px;
     text-align: center;
     background-color: var(--main-color);
     color: var(--header-color);
 }
 
-#assignmentsTable tbody {
+body table tbody {
     color: var(--table-color);
 }
 

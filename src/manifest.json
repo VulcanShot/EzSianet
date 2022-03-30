@@ -3,6 +3,7 @@
     "description": "Quickly see all your Sianet assignments and schedule with this extension.",
     "version": "0.9.1.2",
     "manifest_version": 3,
+    "default_locale": "en",
     "background": {
         "service_worker": "background.js"
     },

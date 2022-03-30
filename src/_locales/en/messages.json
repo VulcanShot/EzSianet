@@ -1,0 +1,32 @@
+{
+    "search": {
+        "message": "Search"
+    },
+    "no_assignments_message": {
+        "message": "You don't yet have any assignments this year :D"
+    },
+    "open_schedule": {
+        "message": "Open my schedule"
+    },
+    "assignment_title": {
+        "message": "Title"
+    },
+    "assignment_subject": {
+        "message": "Subject"
+    },
+    "assignment_type": {
+        "message": "Type"
+    },
+    "assignment_starting_date": {
+        "message": "Starting Date"
+    },
+    "assignment_deathline": {
+        "message": "Deathline"
+    },
+    "assignment_more_info": {
+        "message": "More Info"
+    },
+    "credits": {
+        "message": "By"
+    }
+}
