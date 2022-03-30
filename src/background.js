@@ -14,16 +14,19 @@ function ListenToWebRequests() {
 }
 
 function CheckWebRequests(details) {
-    let url = details.url;
-    if (url.includes('Academico/CalendarioAcademico/List')) {
-        chrome.storage.sync.set({"link": url});
-        console.log('Link updated: ', url);
-        return;
-    }
-    if (url.includes('PerfilComun/ConsultaHorarioClases/HorarioClases')) {
-        chrome.storage.sync.set({"schedule": url});
-        console.log('Schedule updated: ', url);
-        return;
+    let independentPathName = new URL(url).pathname.split('/').slice(2).join('/');
+
+    switch (independentPathName) {
+        case 'Academico/CalendarioAcademico/List':
+            chrome.storage.sync.set({"link": details.url});
+            console.log('Link updated: ', details.url);
+            break;
+        case 'PerfilComun/ConsultaHorarioClases/HorarioClases':
+            chrome.storage.sync.set({"schedule": details.url});
+            console.log('Schedule updated: ', details.url);
+            break;
+        default:
+            break;
     }
 }
 
