@@ -1,0 +1,32 @@
+{
+    "search": {
+        "message": "Chercher"
+    },
+    "no_assignments_message": {
+        "message": "Vous n'avez pas encore de devoirs cette année :D"
+    },
+    "open_schedule": {
+        "message": "Ouvrir mon emploi du temps"
+    },
+    "assignment_title": {
+        "message": "Type"
+    },
+    "assignment_subject": {
+        "message": "Matière"
+    },
+    "assignment_type": {
+        "message": "Taper"
+    },
+    "assignment_starting_date": {
+        "message": "Début"
+    },
+    "assignment_deathline": {
+        "message": "Date limite"
+    },
+    "assignment_more_info": {
+        "message": "Plus d'infos"
+    },
+    "credits": {
+        "message": "Par"
+    }
+}
