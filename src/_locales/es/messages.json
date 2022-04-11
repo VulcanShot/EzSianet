@@ -29,6 +29,18 @@
     "credits": {
         "message": "Por"
     },
+    "no_subject_assignment": {
+        "message": "Comunicado"
+    },
+    "yesterday": {
+        "message": "Ayer"
+    },
+    "today": {
+        "message": "Hoy día"
+    },
+    "tomorrow": {
+        "message": "Mañana"
+    },
     "generic_modal_1": {
         "message": "Por favor sigue las siguientes instrucciones:"
     },

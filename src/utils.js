@@ -1,8 +1,7 @@
 function ParseSianetSubject(str) {
     let parsed = str.trim();
-    if (parsed === "") {
-        parsed = "School's Statement"
-    }
+    if (parsed === "")
+        parsed = chrome.i18n.getMessage("no_subject_assignment")
     return titleize(parsed);
 }
 
@@ -40,13 +39,13 @@ function ParseDate(str) {
     tomorrow.setHours(0, 0, 0, 0);
     
     if (date.getTime() === yesterday.getTime()) {
-        return 'Yesterday';
+        return chrome.i18n.getMessage("yesterday");
     }
     if (date.getTime() === today.getTime()) {
-        return 'Today';
+        return chrome.i18n.getMessage("today");
     }
     if (date.getTime() === tomorrow.getTime()) {
-        return 'Tomorrow';
+        return chrome.i18n.getMessage("tomorrow");
     }
 
     return new Intl.DateTimeFormat('en', { dateStyle: 'full' }).format(date);
@@ -56,7 +55,7 @@ function DateToTD(date, tdClass) {
     let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
     
     let parsedDate = ParseDate(date);
-    if (parsedDate === 'Today' || parsedDate === 'Tomorrow')
+    if (parsedDate === chrome.i18n.getMessage("today") || chrome.i18n.getMessage("tomorrow"))
         return `<td class="${tdClass}" style="color: ${fontcolor};">` + parsedDate + '</td>'
 
     return `<td class="${tdClass}">` + parsedDate + '</td>'

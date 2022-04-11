@@ -29,6 +29,18 @@
     "credits": {
         "message": "By"
     },
+    "no_subject_assignment": {
+        "message": "School's Statement"
+    },
+    "yesterday": {
+        "message": "Yesterday"
+    },
+    "today": {
+        "message": "Today"
+    },
+    "tomorrow": {
+        "message": "Tomorrow"
+    },
     "generic_modal_1": {
         "message": "Please follow the instructions below:"
     },
