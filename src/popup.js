@@ -30,11 +30,11 @@ function ShowScheduleErrorModal() {
     chrome.storage.sync.get('link', (result) => {
         let sianetURL = CustomSianetURL(result.link);
         ShowAnnouncement(
-            'Your schedule could not be loaded',
-            `<p>Please follow the instructions below:</p>
-            <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
-            <br><b>2.</b> Open your schedule on the website
-            <br><br>If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord: Vulcan#2944</p>`
+            chrome.i18n.getMessage("schedule_error_modal_title"),
+            `<p>${chrome.i18n.getMessage("generic_modal_1")}</p>
+            <p><b>1.</b> ${chrome.i18n.getMessage("generic_modal_2")} (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+            <br><b>2.</b> ${chrome.i18n.getMessage("schedule_error_modal_1")}
+            <br><br>${chrome.i18n.getMessage("schedule_error_modal_2")} Vulcan#2944</p>`
         );
     });
 }
@@ -94,13 +94,12 @@ function ShowFirstTimeMessage() {
         if (result.isFirstTime !== true) return
         HideLoader();
         ShowAnnouncement(
-            'Welcome to EzSianet',
-            `<p>Follow the instructions below to quickly set all things up:</p>
-             <p>1. Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)
-             <br>2. Open your calendar and schedule on the website
-             <br>3. Enjoy the extension!
-             <br>Remember that the information is updated automatically</p>
-             <br>You can toggle between light and dark UI modes by clicking on the logo.`
+            chrome.i18n.getMessage("welcome_modal_title"),
+            `<p>${chrome.i18n.getMessage("welcome_modal_1")}</p>
+             <p>1. ${chrome.i18n.getMessage("generic_modal_2")}
+             <br>2. ${chrome.i18n.getMessage("generic_modal_3")}
+             <br>3. ${chrome.i18n.getMessage("welcome_modal_2")}</p>
+             <br>${chrome.i18n.getMessage("welcome_modal_3")}`
         );
         DisplayDummyTable()
     });
@@ -199,17 +198,17 @@ function DisplayData() {
 function ShowErrorModal(customURL = false) {
     chrome.storage.sync.get('link', (result) => {
         let sianetURL;
-        if (customURL) {
+        if (customURL)
             sianetURL = CustomSianetURL(result.link);
-        }
-        else sianetURL = "https://www.sianet.edu.pe/your_school/";
+        else 
+            sianetURL = "https://www.sianet.edu.pe/your_school/";
 
         ShowAnnouncement(
-            'There was an error',
-            `<p>Please follow the instructions below:</p>
-            <p><b>1.</b> Visit your school's SiaNet webpage (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
-            <br><b>2.</b> Open your calendar and schedule on the website
-            <br><br>If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord: Vulcan#2944</p>`
+            chrome.i18n.getMessage("assignments_error_modal_title"),
+            `<p>${chrome.i18n.getMessage("generic_modal_1")}</p>
+            <p><b>1.</b> ${chrome.i18n.getMessage("generic_modal_2")} (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+            <br><b>2.</b> ${chrome.i18n.getMessage("generic_modal_3")}
+            <br><br>${chrome.i18n.getMessage("assignments_error_modal_1")} Vulcan#2944</p>`
         );
     });
     $('#overlay').off('click');

@@ -28,5 +28,41 @@
     },
     "credits": {
         "message": "By"
+    },
+    "generic_modal_1": {
+        "message": "Please follow the instructions below:"
+    },
+    "generic_modal_2": {
+        "message": "Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)"
+    },
+    "generic_modal_3": {
+        "message": "Open your calendar and schedule on the website"
+    },
+    "welcome_modal_title": {
+        "message": "Welcome to EzSianet"
+    },
+    "welcome_modal_1": {
+        "message": "Follow the instructions below to quickly set all things up:"
+    },
+    "welcome_modal_2": {
+        "message": "Enjoy the extension!"
+    },
+    "welcome_modal_3": {
+        "message": "Remember that the information is updated automatically."
+    },
+    "assignments_error_modal_title": {
+        "message": "There was an error"
+    },
+    "assignments_error_modal_1": {
+        "message": "If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord:"
+    },
+    "schedule_error_modal_title": {
+        "message": "Your schedule could not be loaded"
+    },
+    "schedule_error_modal_1": {
+        "message": "Open your schedule on the website"
+    },
+    "schedule_error_modal_2": {
+        "message": "If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord:"
     }
 }
