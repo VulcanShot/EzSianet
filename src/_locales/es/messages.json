@@ -45,7 +45,7 @@
         "message": "Por favor sigue las siguientes instrucciones:"
     },
     "generic_modal_2": {
-        "message": "Visita la página web de SiaNet de tu colegio (ej. https://www.sianet.edu.pe/your_school/)"
+        "message": "Visita la página web de SiaNet de tu colegio"
     },
     "generic_modal_3": {
         "message": "Ingresa a tu calendario y horario"
@@ -76,5 +76,8 @@
     },
     "schedule_error_modal_2": {
         "message": "No te preocupes si aún no haz sido asignado un orario. De lo contrario, me puedes contactar a través de Discord:"
+    },
+    "default_url": {
+        "message": "(ej. https://www.sianet.edu.pe/your_school/)"
     }
 }

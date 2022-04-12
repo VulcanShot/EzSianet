@@ -96,7 +96,7 @@ function ShowFirstTimeMessage() {
         ShowAnnouncement(
             chrome.i18n.getMessage("welcome_modal_title"),
             `<p>${chrome.i18n.getMessage("welcome_modal_1")}</p>
-             <p>1. ${chrome.i18n.getMessage("generic_modal_2")}
+             <p>1. ${chrome.i18n.getMessage("generic_modal_2")} ${chrome.i18n.getMessage("default_url")}
              <br>2. ${chrome.i18n.getMessage("generic_modal_3")}
              <br>3. ${chrome.i18n.getMessage("welcome_modal_2")}</p>
              <br>${chrome.i18n.getMessage("welcome_modal_3")}`

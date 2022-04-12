@@ -45,7 +45,7 @@
         "message": "Hier, aujourd'hui et demain:"
     },
     "generic_modal_2": {
-        "message": "Visitez la page web SiaNet de votre école. (i.e: https://www.sianet.edu.pe/your_school/)"
+        "message": "Visitez la page web SiaNet de votre école."
     },
     "generic_modal_3": {
         "message": "Ouvrez votre calendrier et votre programme sur le site web"
@@ -76,5 +76,8 @@
     },
     "schedule_error_modal_2": {
         "message": "Si vous n'avez pas encore reçu d'horaire, ne vous inquiétez pas. Sinon, n'hésitez pas à me contacter via Discord:"
+    },
+    "default_url": {
+        "message": "(i.e. https://www.sianet.edu.pe/your_school/)"
     }
 }

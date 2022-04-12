@@ -45,7 +45,7 @@
         "message": "Please follow the instructions below:"
     },
     "generic_modal_2": {
-        "message": "Visit your school's SiaNet webpage (i.e: https://www.sianet.edu.pe/your_school/)"
+        "message": "Visit your school's SiaNet webpage"
     },
     "generic_modal_3": {
         "message": "Open your calendar and schedule on the website"
@@ -76,5 +76,8 @@
     },
     "schedule_error_modal_2": {
         "message": "If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord:"
+    },
+    "default_url": {
+        "message": "(c'est à dire https://www.sianet.edu.pe/your_school/)"
     }
 }
