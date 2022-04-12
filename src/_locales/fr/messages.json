@@ -28,5 +28,53 @@
     },
     "credits": {
         "message": "Par"
+    },
+    "no_subject_assignment": {
+        "message": "Déclaration de l'école"
+    },
+    "yesterday": {
+        "message": "Hier"
+    },
+    "today": {
+        "message": "aujourd'hui"
+    },
+    "tomorrow": {
+        "message": "demain"
+    },
+    "generic_modal_1": {
+        "message": "Hier, aujourd'hui et demain:"
+    },
+    "generic_modal_2": {
+        "message": "Visitez la page web SiaNet de votre école. (i.e: https://www.sianet.edu.pe/your_school/)"
+    },
+    "generic_modal_3": {
+        "message": "Ouvrez votre calendrier et votre programme sur le site web"
+    },
+    "welcome_modal_title": {
+        "message": "Bienvenue à EzSianet"
+    },
+    "welcome_modal_1": {
+        "message": "Suivez les instructions ci-dessous pour mettre rapidement tout en place:"
+    },
+    "welcome_modal_2": {
+        "message": "Profitez de l'extension!"
+    },
+    "welcome_modal_3": {
+        "message": "N'oubliez pas que les informations sont mises à jour automatiquement."
+    },
+    "assignments_error_modal_title": {
+        "message": "Il y a eu une erreur"
+    },
+    "assignments_error_modal_1": {
+        "message": "Si l'erreur persiste, il y a probablement un problème avec les serveurs Sianet. N'hésitez pas à me contacter via Discord:"
+    },
+    "schedule_error_modal_title": {
+        "message": "Votre programme n'a pas pu être chargé"
+    },
+    "schedule_error_modal_1": {
+        "message": "Ouvrez votre agenda sur le site web"
+    },
+    "schedule_error_modal_2": {
+        "message": "Si vous n'avez pas encore reçu d'horaire, ne vous inquiétez pas. Sinon, n'hésitez pas à me contacter via Discord:"
     }
 }
