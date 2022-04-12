@@ -168,6 +168,10 @@ tr:last-of-type td:last-of-type {
     border-bottom-right-radius: var(--default-border-radius);
 }
 
+td.special {
+    color: var(--main-color);
+}
+
 #message-if-empty {
     margin: 10px 0 20px;
     font-size: 2.5em;

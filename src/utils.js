@@ -51,14 +51,12 @@ function ParseDate(str) {
     return new Intl.DateTimeFormat('en', { dateStyle: 'full' }).format(date);
 }
 
-function DateToTD(date, tdClass) { 
-    let fontcolor = getComputedStyle(document.body).getPropertyValue('--main-color');
-    
+function DateToTD(date, classname) {
     let parsedDate = ParseDate(date);
-    if (parsedDate === chrome.i18n.getMessage("today") || chrome.i18n.getMessage("tomorrow"))
-        return `<td class="${tdClass}" style="color: ${fontcolor};">` + parsedDate + '</td>'
+    if (parsedDate === chrome.i18n.getMessage("today") || parsedDate === chrome.i18n.getMessage("tomorrow"))
+        return `<td class="${classname} special">` + parsedDate + '</td>'
 
-    return `<td class="${tdClass}">` + parsedDate + '</td>'
+    return `<td class="${classname}">` + parsedDate + '</td>'
 }
 
 function RemoveDiacritics(text) {
