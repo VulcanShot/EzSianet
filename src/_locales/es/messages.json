@@ -75,7 +75,7 @@
         "message": "Ingresa a tu horario"
     },
     "schedule_error_modal_2": {
-        "message": "No te preocupes si aún no haz sido asignado un orario. De lo contrario, me puedes contactar a través de Discord:"
+        "message": "No te preocupes si aún no haz sido asignado un horario. De lo contrario, me puedes contactar a través de Discord:"
     },
     "default_url": {
         "message": "(ej. https://www.sianet.edu.pe/your_school/)"
