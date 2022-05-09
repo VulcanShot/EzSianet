@@ -53,7 +53,7 @@ $('#logo').click(function() {
         ShowErrorModal(false);
         return;
     }
-    window.open(CustomSianetURL(storage.link), '_blank');
+    window.open(CustomSianetURL(storage.link) + 'Home/Index');
 });
 
 $('.modal').scroll(function() {
