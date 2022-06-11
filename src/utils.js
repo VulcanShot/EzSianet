@@ -68,6 +68,6 @@ function FirstSubdomainFromURLString(url) {
     return subdomains.split('/')[0];  
 }
 
-function CustomSianetURL(url) {
-    return `https://www.sianet.edu.pe/${ FirstSubdomainFromURLString(url) }/`;
+function GetSianetURL(url) {
+    return url ? `https://www.sianet.edu.pe/${ FirstSubdomainFromURLString(url) }/` : "https://www.sianet.edu.pe/your_school/";
 }
