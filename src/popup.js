@@ -2,18 +2,22 @@ let removeOverlay = true;
 const storage = {};
 const ASSIGNMENTS_PER_LOAD = 50;
 
-$('#search').on('input', function(event) { // On key pressed while search bar is focused
+$('#search').on('input', function(event) {
     let query = RemoveDiacritics(event.target.value);
+    
+    if (/^\s*$/.test(query))
+        $('#load-more').show()
+
+    else if (storage.hiddenAssignments.length > 0)
+        $('#load-more').hide()
+
     $('body table tbody td.title').each((index, td) => { // Each assignment
         let queryRegex = new RegExp(query, 'i');
         let normalizedColumnTitle = RemoveDiacritics(td.innerText);
         let tr = $(td).parent();
-        if (queryRegex.test(normalizedColumnTitle)) { // If search matches
-            tr.css('display', 'table-row');
-        } else {
-            tr.css('display', 'none');
-        }
+        queryRegex.test(normalizedColumnTitle) ? tr.show() : tr.hide()
     });
+
     $('body table tr').css('background-color', 'initial');
     ChangeEvenRowColor();
 });
