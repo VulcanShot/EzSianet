@@ -7,4 +7,5 @@ $("#table-type").text(chrome.i18n.getMessage("assignment_type"));
 $("#table-starting-date").text(chrome.i18n.getMessage("assignment_starting_date"));
 $("#table-deathline").text(chrome.i18n.getMessage("assignment_deathline"));
 $("#table-more-info").text(chrome.i18n.getMessage("assignment_more_info"));
+$("#load-more").text(chrome.i18n.getMessage("load_more"));
 $("#credits").text(chrome.i18n.getMessage("credits") + ' Vulcan#2944')

@@ -1,6 +1,6 @@
-let globalAssignments;
 let removeOverlay = true;
-let storage = {};
+const storage = {};
+const ASSIGNMENTS_PER_LOAD = 50;
 
 $('#search').on('input', function(event) { // On key pressed while search bar is focused
     let query = RemoveDiacritics(event.target.value);
@@ -28,7 +28,7 @@ $('#schedule').click(function() {
 
 function ShowScheduleErrorModal() {
     chrome.storage.sync.get('link', (result) => {
-        let sianetURL = CustomSianetURL(result.link);
+        let sianetURL = GetSianetURL(result.link);
         ShowAnnouncement(
             chrome.i18n.getMessage("schedule_error_modal_title"),
             `<p>${chrome.i18n.getMessage("generic_modal_1")}</p>
@@ -50,7 +50,7 @@ $('#mode').click(function() {
 
 $('#logo').click(function() {
     if (storage.link === undefined) {
-        ShowErrorModal(false);
+        ShowErrorModal();
         return;
     }
     window.open(GetSianetURL(storage.link) + 'Home/Index', '_blank');
@@ -70,13 +70,34 @@ $('.modal').scroll(function() {
 
 });
 
+$('#load-more').click(() => {
+    let shown = [];
+
+    for (let index = storage.hiddenAssignments.length - 1; index >= 0; index--) {
+        const assignment = storage.hiddenAssignments[index];
+
+        if (index >= storage.hiddenAssignments.length - ASSIGNMENTS_PER_LOAD) {
+            AddToTable(assignment);
+            shown.push(assignment.id);
+            continue;
+        }
+    }
+
+    storage.hiddenAssignments = storage.hiddenAssignments.filter((assignment) => {
+        return shown.indexOf(assignment.id) === -1;
+    });
+
+    if (storage.hiddenAssignments.length === 0)
+        $('#load-more').hide();
+});
+
 (async function() {
     SetTheme();
     ShowFirstTimeMessage();
     await GetDataFromStorage().then(itemsFromChrome => {
         Object.assign(storage, itemsFromChrome)
     });
-    globalAssignments = await FetchData().then(items => { return items; })
+    storage.assignments = await FetchData().then(items => { return items; })
     DisplayData();
     StopLoading();
     ChangeEvenRowColor();
@@ -119,9 +140,11 @@ async function GetDataFromStorage() {
 
 async function FetchData() {
     let data;
+    
     function setData(dt) {
         data = dt;
     }
+
     let attributesToDelete = [ 'objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 
         'stIdCursoAsignacion','stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 
         'boVisto', 'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
@@ -147,38 +170,39 @@ async function FetchData() {
                 });
             });
         })
-        .catch(error => console.error(error))
     return await Promise.resolve(data);
 }
 
 function DisplayData() {
     console.groupCollapsed('Assignments Table');
     console.log("Source: " + storage.link);
-    console.table(globalAssignments);
+    console.table(storage.assignments);
     console.groupEnd();
 
-    if (globalAssignments.length == 0) {
-        ShowErrorModal(true);
+    if (storage.assignments.length === 0 && storage.backup) {
+        storage.backup.forEach((assignment) => {
+            AddToTable(assignment);
+        });
+        ShowNetworkErrorModal();
+        return;
+    }
+
+    if (storage.assignments.length === 0) {
+        ShowErrorModal();
         return;
     }
     
-    for (let i = globalAssignments.length - 1; i >= 0; i--) {
-        // IMPORTANT: Apparently Sianet stores assignments from each year in a unique URL
-        // if (new Date(globalAssignments[i].end).getFullYear() !== new Date().getFullYear()) {
-        //     globalAssignments.splice(i, 1); 
-        //     continue;
-        // }
-        
-        let repetitions = globalAssignments.filter(x => x.id === globalAssignments[i].id);
-        if (repetitions.length === 2) {
-            let startIndex = globalAssignments.indexOf(repetitions[0]);
-            let endIndex = globalAssignments.indexOf(repetitions[1]);
-            globalAssignments[startIndex].end = repetitions[1].end;
-            globalAssignments.splice(endIndex, 1);
-        }
+    for (let i = storage.assignments.length - 1; i >= 0; i--) { // Remove repeated assignments
+        let repetitions = storage.assignments.filter(x => x.id === storage.assignments[i].id);
+        if (repetitions.length !== 2) continue;
+
+        let startIndex = storage.assignments.indexOf(repetitions[0]);
+        let endIndex = storage.assignments.indexOf(repetitions[1]);
+        storage.assignments[startIndex].end = repetitions[1].end;
+        storage.assignments.splice(endIndex, 1);
     }
 
-    if (globalAssignments.length === 0) {
+    if (storage.assignments.length === 0) {
         $('#message-if-empty').css('width', $('#message-if-empty').outerWidth());
         $('#message-if-empty').show();
         $('#schedule').css('margin', '0px');
@@ -187,21 +211,46 @@ function DisplayData() {
         return;
     }
 
-    globalAssignments.forEach((assignment) => {
-        AddToTable(assignment);
-    });
+    let backup = [];
 
+    for (let index = storage.assignments.length - 1; index >= 0; index--) {
+        const assignment = storage.assignments[index];
+
+        if (assignment.end > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
+            backup.push(assignment);
+
+        if (index >= storage.assignments.length - ASSIGNMENTS_PER_LOAD) {
+            AddToTable(assignment);
+            continue;
+        }
+
+        if (!storage.hiddenAssignments)
+            storage.hiddenAssignments = [];
+
+        storage.hiddenAssignments.push(assignment);
+        $("#load-more").css('display', 'block');
+    }
+
+    SetUpBackup(backup);
     ModalEventListeners();
     sortTable($('body table').get(0), 5, -1);
 };
 
-function ShowErrorModal(customURL = false) {
+function SetUpBackup(arr) {
+    if (storage.backup && !ArraysAreEqual(arr, storage.backup))
+        chrome.storage.sync.set({backup: arr});
+}
+
+function ArraysAreEqual(array1, array2) {
+    const array2Sorted = array2.slice().sort();
+    return array1.length === array2.length && array1.slice().sort().every(function(value, index) {
+        return value === array2Sorted[index];
+    });
+}
+
+function ShowErrorModal() {
     chrome.storage.sync.get('link', (result) => {
-        let sianetURL;
-        if (customURL)
-            sianetURL = CustomSianetURL(result.link);
-        else 
-            sianetURL = "https://www.sianet.edu.pe/your_school/";
+        let sianetURL = GetSianetURL(result.link);
 
         ShowAnnouncement(
             chrome.i18n.getMessage("assignments_error_modal_title"),
@@ -214,6 +263,22 @@ function ShowErrorModal(customURL = false) {
     $('#overlay').off('click');
     $('[data-close-button]').hide();
     DisplayDummyTable()
+}
+
+function ShowNetworkErrorModal() {
+    chrome.storage.sync.get('link', (result) => {
+        let sianetURL = GetSianetURL(result.link);
+        
+        ShowAnnouncement(
+            chrome.i18n.getMessage("assignments_error_modal_title"),
+            `<p>${chrome.i18n.getMessage("network_error_modal_1")}</p>
+            <p>${chrome.i18n.getMessage("network_error_modal_2")}</p>
+            <p><b>1.</b> ${chrome.i18n.getMessage("generic_modal_2")} (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
+            <br><b>2.</b> ${chrome.i18n.getMessage("generic_modal_3")}
+            <br><br>${chrome.i18n.getMessage("assignments_error_modal_1")} Vulcan#2944</p>`
+        );
+    });
+    $('#overlay').off('click');
 }
 
 function AddToTable(obj) {
@@ -253,10 +318,9 @@ function ModalEventListeners() {
     $('[data-modal-target]').each((index, button) => {
         $(button).click(() => {
             const assignmentId = button.parentElement.className;
-            let selectedAssignment = globalAssignments.find(assigned => assigned.id === assignmentId);
+            let selectedAssignment = storage.assignments.find(assigned => assigned.id === assignmentId);
             SetModalTitle(selectedAssignment.title);
-            let body = selectedAssignment.stDescripcionInterna;
-            SetModalBody(body);
+            SetModalBody(selectedAssignment.stDescripcionInterna);
             const modal = document.querySelector(button.dataset.modalTarget);
             modal.classList.remove('announcement');
             openModal(modal);
