@@ -83,6 +83,8 @@ $('#load-more').click(() => {
         }
     }
 
+    SortTable();
+
     storage.hiddenAssignments = storage.hiddenAssignments.filter((assignment) => {
         return shown.indexOf(assignment.id) === -1;
     });
@@ -230,10 +232,11 @@ function DisplayData() {
         storage.hiddenAssignments.push(assignment);
         $("#load-more").css('display', 'block');
     }
+    storage.hiddenAssignments.reverse();
 
     SetUpBackup(backup);
     ModalEventListeners();
-    sortTable($('body table').get(0), 5, -1);
+    SortTable();
 };
 
 function SetUpBackup(arr) {
@@ -247,6 +250,8 @@ function ArraysAreEqual(array1, array2) {
         return value === array2Sorted[index];
     });
 }
+
+let SortTable = () => sortTable($('body table').get(0), 5, -1);
 
 function ShowErrorModal() {
     chrome.storage.sync.get('link', (result) => {
