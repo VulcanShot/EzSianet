@@ -60,7 +60,7 @@ $('#logo').click(function() {
     window.open(GetSianetURL(storage.link) + 'Home/Index', '_blank');
 });
 
-$('.modal').scroll(function() {
+$('[data-modal-body]').scroll(function() {
     
     var scrollTop = $(this).scrollTop();
 
@@ -151,7 +151,7 @@ async function FetchData() {
         data = dt;
     }
 
-    let attributesToDelete = [ 'objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 
+    let unusedProperties = [ 'objModelo', 'stColor', 'stCurso', 'stFechaLeido', 'stFechaRespuesta', 'stIdActividadAcademica', 'stIdAlumno', 
         'stIdCursoAsignacion','stMensaje', 'stNombreTablaInterno', 'stTipoAsistencia', 'stTipoAsistenciaDescripcion', 'stToolTip', 'stFechaFin', 'color_c', 
         'boVisto', 'AsignadoPor', 'inIdAlumnoCicloLectivo', 'inIdPersona', 'boVencido', 'boRespondido', 'boExito', 'boEsInicio', 'boCalificado', 'boBloqueado', 
         'allDay', 'stDescripcionMotivo' ];
@@ -171,10 +171,20 @@ async function FetchData() {
         .then(json => setData(json))
         .then(() => {
             data.forEach(assignment => {
-                attributesToDelete.forEach(attribute => {
+                unusedProperties.forEach(attribute => {
                     delete assignment[attribute];
                 });
+                assignment.id = 'EZ-' + assignment.id;
             });
+        })
+        .catch(() => {
+            console.log(storage.backup);
+            storage.backup.forEach((assignment) => {
+                AddToTable(assignment);
+            });
+            ShowNetworkErrorModal();
+            StopLoading();
+            throw 'Network Error';
         })
     return await Promise.resolve(data);
 }
@@ -222,11 +232,9 @@ function DisplayData() {
     for (let index = storage.assignments.length - 1; index >= 0; index--) {
         const assignment = storage.assignments[index];
 
-        if (assignment.end > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000))
-            backup.push(assignment);
-
         if (index >= storage.assignments.length - ASSIGNMENTS_PER_LOAD) {
             AddToTable(assignment);
+            backup.push(assignment);
             continue;
         }
 
@@ -244,8 +252,8 @@ function DisplayData() {
 };
 
 function SetUpBackup(arr) {
-    if (storage.backup && !ArraysAreEqual(arr, storage.backup))
-        chrome.storage.sync.set({backup: arr});
+    if (!storage.backup || !ArraysAreEqual(arr, storage.backup))
+        chrome.storage.local.set({backup: arr});
 }
 
 function ArraysAreEqual(array1, array2) {
@@ -291,19 +299,55 @@ function ShowNetworkErrorModal() {
 }
 
 function AddToTable(obj) {
-    let k =  `<tr class="${obj.id}">
-                    <td class="title"> ${obj.title.trim()} </td>
-                    <td class="subject"> ${ ParseSianetSubject(obj.DescripcionCurso) } </td>
-                    <td class="type"> ${ ParseSianetType(obj.tipo) } </td>
-                    ${ DateToTD(obj.start, 'start') }
-                    ${ DateToTD(obj.end, 'end') }
-                    <td class="real-end">${ Date.parse(obj.end) }</td>
-                    <td class="more-info" data-modal-target="#modal">
-                        <button class="more-info-button">&plus;</button>
-                    </td>
-            </tr>`;
-        
-    $('body table tbody').append(k);
+    let row = document.createElement('tr');
+    row.id = obj.id;
+
+    let title = document.createElement('td');
+    title.className = "title";
+    title.innerText = obj.title.trim();
+    row.appendChild(title);
+
+    let subject = document.createElement('td');
+    subject.className = "subject";
+    subject.innerText = ParseSianetSubject(obj.DescripcionCurso);
+    row.appendChild(subject);
+
+    let type = document.createElement('td');
+    type.className = "type";
+    type.innerText = ParseSianetType(obj.tipo);
+    row.appendChild(type);
+
+    let start = DateToTD(obj.start, 'start');
+    row.appendChild(start);
+
+    let end = DateToTD(obj.end, 'end');
+    row.appendChild(end);
+
+    let realEnd = document.createElement('td');
+    realEnd.className = "real-end";
+    realEnd.innerText = Date.parse(obj.end);
+    row.appendChild(realEnd);
+
+    let moreInfo = document.createElement('td');
+    moreInfo.className = "more-info";
+    row.appendChild(moreInfo);
+
+    $(moreInfo).click((event) => {
+        let row = event.target.closest('tr');
+        const assignmentId = row.id;
+        let selectedAssignment = storage.assignments.find(assigned => assigned.id === assignmentId);
+        SetModalTitle(selectedAssignment.title);
+        SetModalBody(selectedAssignment.stDescripcionInterna);
+        $('#modal').removeClass('announcement')
+        openModal();
+    })
+
+    let moreInfoButton = document.createElement('button');
+    moreInfoButton.className = "more-info-button";
+    moreInfoButton.innerHTML = '&plus;';
+    moreInfo.appendChild(moreInfoButton);
+
+    $('body table tbody').append(row);
 }
 
 function StopLoading() {
@@ -324,41 +368,24 @@ function HideLoader() { $('#loader').css('display', 'none'); }
 // MODAL
 
 function ModalEventListeners() {
-    $('[data-modal-target]').each((index, button) => {
-        $(button).click(() => {
-            const assignmentId = button.parentElement.className;
-            let selectedAssignment = storage.assignments.find(assigned => assigned.id === assignmentId);
-            SetModalTitle(selectedAssignment.title);
-            SetModalBody(selectedAssignment.stDescripcionInterna);
-            const modal = document.querySelector(button.dataset.modalTarget);
-            modal.classList.remove('announcement');
-            openModal(modal);
-        })
-    })
-
-    $('[data-close-button]').each((index, button) => {
-        $(button).click((event) => {
-            const modal = event.target.closest('.modal');
-            closeModal(modal);
-        })
+    $('[data-close-button]').click((event) => {
+        closeModal();
     })
 }
 
 $('#overlay').click(() => {
     $('.modal.active').each((index, modal) => {
-        closeModal(modal);
+        closeModal();
     })
 })
 
-function openModal(modal) {
-    if (modal == null) return
-    modal.classList.add('active');
+function openModal() {
+    $('#modal').addClass('active')
     $('#overlay').addClass('active');
 }
 
-function closeModal(modal) {
-    if (modal == null) return
-    modal.classList.remove('active');
+function closeModal() {
+    $('#modal').removeClass('active')
     $('#overlay').removeClass('active');
 }
 
@@ -367,14 +394,14 @@ function SetModalTitle(title) {
 }
 
 function SetModalBody(body) {
-    $('.modal-body').html(body);
-}  
+    $('[data-modal-body]').html(body);
+}
 
 function ShowAnnouncement(title, body) { 
     SetModalTitle(title);
     SetModalBody(body);
     $('#modal').addClass('announcement');
-    openModal(modal);
+    openModal();
     ModalEventListeners();
     removeOverlay = false;
 }

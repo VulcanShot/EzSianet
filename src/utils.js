@@ -53,10 +53,14 @@ function ParseDate(str) {
 
 function DateToTD(date, classname) {
     let parsedDate = ParseDate(date);
-    if (parsedDate === chrome.i18n.getMessage("today") || parsedDate === chrome.i18n.getMessage("tomorrow"))
-        return `<td class="${classname} special">` + parsedDate + '</td>'
+    let cell = document.createElement('td');
+    cell.innerText = parsedDate;
+    cell.classList.add(classname);
 
-    return `<td class="${classname}">` + parsedDate + '</td>'
+    if (parsedDate === chrome.i18n.getMessage("today") || parsedDate === chrome.i18n.getMessage("tomorrow"))
+        cell.classList.add('special')
+
+    return cell;
 }
 
 function RemoveDiacritics(text) {

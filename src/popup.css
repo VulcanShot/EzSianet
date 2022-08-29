@@ -112,6 +112,10 @@ body table td, body table th {
 }
 
 body table th {
+    padding: 8px 18px;
+    text-align: center;
+    background-color: var(--main-color);
+    color: var(--header-color);
     transition: all 0.3s ease;
 }
 
@@ -123,13 +127,6 @@ body table tr:hover {
     background-color: #bebebe !important;
     color: var(--background-color);
     transition: all 0.1s ease;
-}
-
-body table th {
-    padding: 8px 18px;
-    text-align: center;
-    background-color: var(--main-color);
-    color: var(--header-color);
 }
 
 body table tbody {
@@ -186,7 +183,6 @@ td.special {
 }
 
 #load-more {
-    /* display: block; */
     display: none;
     margin: 10px auto;
     padding: 0.1rem 0.3rem;
@@ -231,7 +227,7 @@ td.special {
     text-align: center;
 }
 
-.modal-body {
+[data-modal-body] {
     padding: 5px 10px 10px 10px;
 }
 
@@ -243,6 +239,7 @@ td.special {
     font-size: 1.25rem;
     font-weight: bold;
     margin: 0 6px;
+    color: #16242f;
 }
 
 .modal.active {
