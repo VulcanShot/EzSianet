@@ -299,23 +299,19 @@ function ShowNetworkErrorModal() {
 }
 
 function AddToTable(obj) {
+    function createDataCell(className, content) {
+        let dataCell = document.createElement('td');
+        dataCell.className = className;
+        dataCell.innerText = content;
+        row.appendChild(dataCell);
+    }
+
     let row = document.createElement('tr');
     row.id = obj.id;
-
-    let title = document.createElement('td');
-    title.className = "title";
-    title.innerText = obj.title.trim();
-    row.appendChild(title);
-
-    let subject = document.createElement('td');
-    subject.className = "subject";
-    subject.innerText = ParseSianetSubject(obj.DescripcionCurso);
-    row.appendChild(subject);
-
-    let type = document.createElement('td');
-    type.className = "type";
-    type.innerText = ParseSianetType(obj.tipo);
-    row.appendChild(type);
+    
+    createDataCell("title", obj.title.trim());
+    createDataCell("subject", ParseSianetSubject(obj.DescripcionCurso));
+    createDataCell("type", ParseSianetType(obj.tipo));
 
     let start = DateToTD(obj.start, 'start');
     row.appendChild(start);
@@ -323,10 +319,7 @@ function AddToTable(obj) {
     let end = DateToTD(obj.end, 'end');
     row.appendChild(end);
 
-    let realEnd = document.createElement('td');
-    realEnd.className = "real-end";
-    realEnd.innerText = Date.parse(obj.end);
-    row.appendChild(realEnd);
+    createDataCell("real-end", Date.parse(obj.end));
 
     let moreInfo = document.createElement('td');
     moreInfo.className = "more-info";
