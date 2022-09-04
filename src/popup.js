@@ -107,6 +107,7 @@ $('#load-more').click(() => {
     DisplayData();
     StopLoading();
     ChangeEvenRowColor();
+    SetModalTitle("Lorem Ipsum"); // Fixes table increasing width for some reason ( FIND THE REASON D: )
 })();
 
 function SetTheme() {
