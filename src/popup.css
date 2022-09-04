@@ -29,7 +29,6 @@ body {
     --default-border-radius: 5px;
     --logo-url: url('/icons/icon_32.png');
     --mode-url: url('/icons/light_mode.png');
-    --mode-alt: 'Light Mode';
 
     background-color: var(--background-color);
     transition: 0.1s;
@@ -45,7 +44,6 @@ body.dark {
     --table-secondary-color: #767a7d;
     --logo-url: url('/icons/icon_dark.png');
     --mode-url: url('/icons/dark_mode.png');
-    --mode-alt: 'Dark Mode';
 }
 
 input:focus, textarea:focus, select:focus {
@@ -83,7 +81,6 @@ input:focus, textarea:focus, select:focus {
 #mode {
     right: 0;
     content: var(--mode-url);
-    alt: var(--mode-alt);
 }
     
 #top-bar {
