@@ -33,7 +33,7 @@ body {
 
     background-color: var(--background-color);
     transition: 0.1s;
-    margin: 0 10px;
+    margin: 0 12px;
 }
 
 body.dark {
@@ -203,7 +203,7 @@ td.special {
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     transition: 200ms ease-in-out;
-    border-radius: 10px;
+    border-radius: 5px;
     z-index: 10;
     background-color: white;
     width: 500px;
@@ -265,6 +265,7 @@ td.special {
     bottom: 0;
     background-color: rgba(0, 0, 0, .5);
     pointer-events: none;
+    backdrop-filter: blur(1px);
 }
 
 #overlay.active {
