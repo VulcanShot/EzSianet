@@ -97,6 +97,14 @@ $('#load-more').click(() => {
         $('#load-more').hide();
 });
 
+$(document).keydown((event) => { 
+    if (event.key !== "Escape" || !$('#modal').hasClass('active')) 
+        return;
+    
+    event.preventDefault();
+    closeModal();
+});
+
 (async function() {
     SetTheme();
     ShowFirstTimeMessage();
@@ -374,13 +382,11 @@ $('#overlay').click(() => {
 })
 
 function openModal() {
-    $('#modal').addClass('active')
-    $('#overlay').addClass('active');
+    $('#modal, #overlay').addClass('active')
 }
 
 function closeModal() {
-    $('#modal').removeClass('active')
-    $('#overlay').removeClass('active');
+    $('#modal, #overlay').removeClass('active')
 }
 
 function SetModalTitle(title) {
