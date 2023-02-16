@@ -60,7 +60,7 @@ $('#logo').click(function() {
     window.open(GetSianetURL(storage.link) + 'Home/Index', '_blank');
 });
 
-$('[data-modal-body]').scroll(function() {
+$('.modal').scroll(function() {
     var scrollTop = $(this).scrollTop();
 
     $('.modal-header').css({
@@ -96,7 +96,7 @@ $('#load-more').click(() => {
 });
 
 $(document).keydown((event) => { 
-    if (event.key !== "Escape" || !$('#modal').hasClass('active')) 
+    if (event.key !== "Escape" || !$('.modal').hasClass('active')) 
         return;
     
     event.preventDefault();
@@ -339,7 +339,7 @@ function AddToTable(obj) {
         let selectedAssignment = storage.assignments.find(assigned => assigned.id === assignmentId);
         SetModalTitle(selectedAssignment.title);
         SetModalBody(selectedAssignment.stDescripcionInterna);
-        $('#modal').removeClass('announcement')
+        $('.modal').removeClass('announcement')
         openModal();
     })
 
@@ -381,11 +381,11 @@ $('#overlay').click(() => {
 })
 
 function openModal() {
-    $('#modal, #overlay').addClass('active')
+    $('.modal, #overlay').addClass('active')
 }
 
 function closeModal() {
-    $('#modal, #overlay').removeClass('active')
+    $('.modal, #overlay').removeClass('active')
 }
 
 function SetModalTitle(title) {
@@ -399,7 +399,7 @@ function SetModalBody(body) {
 function ShowAnnouncement(title, body) { 
     SetModalTitle(title);
     SetModalBody(body);
-    $('#modal').addClass('announcement');
+    $('.modal').addClass('announcement');
     openModal();
     ModalEventListeners();
     removeOverlay = false;
