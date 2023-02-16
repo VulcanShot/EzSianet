@@ -61,7 +61,6 @@ $('#logo').click(function() {
 });
 
 $('[data-modal-body]').scroll(function() {
-    
     var scrollTop = $(this).scrollTop();
 
     $('.modal-header').css({
@@ -71,7 +70,6 @@ $('[data-modal-body]').scroll(function() {
             return opacity;
         }
     });
-
 });
 
 $('#load-more').click(() => {
@@ -253,7 +251,8 @@ function DisplayData() {
         storage.hiddenAssignments.push(assignment);
         $("#load-more").css('display', 'block');
     }
-    storage.hiddenAssignments.reverse();
+
+    storage.hiddenAssignments?.reverse();
 
     SetUpBackup(backup);
     ModalEventListeners();
