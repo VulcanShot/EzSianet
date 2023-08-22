@@ -99,16 +99,16 @@ input:focus, textarea:focus, select:focus {
     padding: 0.2rem 0;
 }
 
-body table {
+#assignments-table {
     border-collapse: collapse;
     width: 100%;
 }
 
-body table td, body table th {
+#assignments-table td, #assignments-table th {
     padding: 8px;
 }
 
-body table th {
+#assignments-table th {
     padding: 8px 18px;
     text-align: center;
     background-color: var(--main-color);
@@ -118,17 +118,17 @@ body table th {
     font-size: 1.05em;
 }
 
-body table th:hover {
+#assignments-table th:hover {
     background: var(--secondary-color);
 }
 
-body table tr:hover {
+#assignments-table tr:hover {
     background-color: #bebebe !important;
     color: var(--background-color);
     transition: all 0.1s ease;
 }
 
-body table tbody {
+#assignments-table tbody {
     color: var(--table-color);
 }
 
