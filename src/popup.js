@@ -236,6 +236,9 @@ function DisplayData() {
 
     let backup = [];
 
+    if (!storage.hiddenAssignments)
+        storage.hiddenAssignments = [];
+
     for (let index = storage.assignments.length - 1; index >= 0; index--) {
         const assignment = storage.assignments[index];
 
@@ -244,9 +247,6 @@ function DisplayData() {
             backup.push(assignment);
             continue;
         }
-
-        if (!storage.hiddenAssignments)
-            storage.hiddenAssignments = [];
 
         storage.hiddenAssignments.push(assignment);
         $("#load-more").css('display', 'block');
