@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="popup.css">
+        <script src="vendor/jquery-3.7.1.min.js"></script>
+        <script src="sorting.js"></script>
+        <script src="locales.js" defer></script>
+        <script src="modal.js" defer></script>
+        <script src="utils.js" defer></script>
+        <script src="popup.js" defer></script>
+        <title>EzSianet</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <div id="top-bar">
+            <img id="logo">
+            <input id="search" type="search" autocomplete="off">
+            <img id="mode">
+        </div>
+        <div id="message-if-empty"></div>
+        <button id="schedule" type="button"></button>
+        <table id="assignments-table">
+            <thead>
+                <tr>
+                    <th id="table-title"></th>
+                    <th id="table-subject"></th>
+                    <th id="table-type"></th>
+                    <th id="table-starting-date"></th>
+                    <th id="table-deathline"></th>
+                    <th id="table-more-info"></th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <button id="load-more"></button>
+        <div id="credits"></div> 
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title"></div>
+                <button data-close-button>&times;</button>
+            </div>
+            <div data-modal-body></div>
+        </div>
+        <div id="loader"></div>
+        <div id="overlay" class="active"></div>
+    </body>
+</html>

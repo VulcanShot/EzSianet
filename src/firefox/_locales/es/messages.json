@@ -1,0 +1,86 @@
+{
+    "search": {
+        "message": "Buscar"
+    },
+    "no_assignments_message": {
+        "message": "Aún no tienes tareas :D"
+    },
+    "open_schedule": {
+        "message": "Abrir mi horario"
+    },
+    "assignment_title": {
+        "message": "Título"
+    },
+    "assignment_subject": {
+        "message": "Asignatura"
+    },
+    "assignment_type": {
+        "message": "Tipo"
+    },
+    "assignment_starting_date": {
+        "message": "Fecha de Inicio"
+    },
+    "assignment_deathline": {
+        "message": "Fecha de Entrega"
+    },
+    "assignment_more_info": {
+        "message": "Más Información"
+    },
+    "load_more": {
+        "message": "Cargar más"
+    },
+    "credits": {
+        "message": "Por"
+    },
+    "no_subject_assignment": {
+        "message": "Comunicado"
+    },
+    "yesterday": {
+        "message": "Ayer"
+    },
+    "today": {
+        "message": "Hoy día"
+    },
+    "tomorrow": {
+        "message": "Mañana"
+    },
+    "generic_modal_1": {
+        "message": "Por favor sigue las siguientes instrucciones:"
+    },
+    "generic_modal_2": {
+        "message": "Visita la página web de SiaNet de tu colegio"
+    },
+    "generic_modal_3": {
+        "message": "Ingresa a tu calendario y horario"
+    },
+    "welcome_modal_title": {
+        "message": "Bienvenido a EzSianet"
+    },
+    "welcome_modal_1": {
+        "message": "Sigue las instrucciones a continuación para que la extensión funcione correctamente"
+    },
+    "welcome_modal_2": {
+        "message": "¡Disfruta de esta extensión!"
+    },
+    "welcome_modal_3": {
+        "message": "Recuerda que la información se actualiza automaticamente."
+    },
+    "assignments_error_modal_title": {
+        "message": "Ocurrió un error"
+    },
+    "assignments_error_modal_1": {
+        "message": "Si el error persiste probablmente los servidores de SiaNet no estén teniendo un buen día. Me puedes contactar a través de Discord:"
+    },
+    "schedule_error_modal_title": {
+        "message": "Tu horario no fue encontrado"
+    },
+    "schedule_error_modal_1": {
+        "message": "Ingresa a tu horario"
+    },
+    "schedule_error_modal_2": {
+        "message": "No te preocupes si aún no haz sido asignado un horario. De lo contrario, me puedes contactar a través de Discord:"
+    },
+    "default_url": {
+        "message": "(ej. https://www.sianet.edu.pe/your_school/)"
+    }
+}
