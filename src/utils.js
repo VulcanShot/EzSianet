@@ -1,8 +1,7 @@
 function ParseSianetSubject(str) {
-    let parsed = str.trim();
-    if (parsed === "")
-        parsed = chrome.i18n.getMessage("no_subject_assignment")
-    return titleize(parsed);
+    if (!str)
+        return chrome.i18n.getMessage("no_subject_assignment");
+    return titleize(str.trim());
 }
 
 function ParseSianetType(str) { // i.e.: _TAREA = Tarea
@@ -27,24 +26,17 @@ function titleize(str) { // i.e.: HELLO WORLD = Hello World
 
 function ParseDate(str) {
     let date = new Date(str);
-    date.setHours(0, 0, 0, 0);
-    
-    let yesterday = new Date(new Date().getTime() - 24 * 60 * 60 * 1000);
-    yesterday.setHours(0, 0, 0, 0);
-
     let today = new Date();
-    today.setHours(0, 0, 0, 0);
+    let yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+    let tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
     
-    let tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
-    tomorrow.setHours(0, 0, 0, 0);
-    
-    if (date.getTime() === yesterday.getTime()) {
+    if (date.toDateString() === yesterday.toDateString()) {
         return chrome.i18n.getMessage("yesterday");
     }
-    if (date.getTime() === today.getTime()) {
+    if (date.toDateString() === today.toDateString()) {
         return chrome.i18n.getMessage("today");
     }
-    if (date.getTime() === tomorrow.getTime()) {
+    if (date.toDateString() === tomorrow.toDateString()) {
         return chrome.i18n.getMessage("tomorrow");
     }
 
