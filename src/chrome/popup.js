@@ -22,27 +22,6 @@ $('#search').on('input', function (event) {
   ChangeEvenRowColor();
 });
 
-$('#schedule').click(function () {
-  if (storage.schedule === undefined) {
-    ShowScheduleErrorModal();
-    return;
-  }
-  window.open(storage.schedule, '_blank');
-});
-
-function ShowScheduleErrorModal() {
-  chrome.storage.sync.get('link', (result) => {
-    let sianetURL = GetSianetURL(result.link);
-    ShowAnnouncement(
-      chrome.i18n.getMessage("schedule_error_modal_title"),
-      `<p>${chrome.i18n.getMessage("generic_modal_1")}</p>
-            <p><b>1.</b> ${chrome.i18n.getMessage("generic_modal_2")} (<a href="${sianetURL}" target="_blank">${sianetURL}</a>)
-            <br><b>2.</b> ${chrome.i18n.getMessage("schedule_error_modal_1")}
-            <br><br>${chrome.i18n.getMessage("schedule_error_modal_2")} Vulcan#2944</p>`
-    );
-  });
-}
-
 $('#mode').click(function () {
   $(document.body).toggleClass('dark');
   if ($(document.body).hasClass('dark')) {
@@ -227,7 +206,6 @@ function DisplayData() {
   if (storage.assignments.length === 0) {
     $('#message-if-empty').css('width', $('#message-if-empty').outerWidth());
     $('#message-if-empty').show();
-    $('#schedule').css('margin', '0px');
     $('body table').hide();
     $('#search').hide();
     return;

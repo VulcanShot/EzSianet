@@ -1,6 +1,5 @@
 $("#search").attr("placeholder", chrome.i18n.getMessage("search") + '...').val("").focus().blur()
 $("#message-if-empty").text(chrome.i18n.getMessage("no_assignments_message"))
-$("#schedule").text(chrome.i18n.getMessage("open_schedule"))
 $("#table-title").text(chrome.i18n.getMessage("assignment_title"));
 $("#table-subject").text(chrome.i18n.getMessage("assignment_subject"));
 $("#table-type").text(chrome.i18n.getMessage("assignment_type"));

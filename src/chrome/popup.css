@@ -50,7 +50,7 @@ input:focus, textarea:focus, select:focus {
     outline: none;
 }
 
-#schedule:hover, #load-more:hover {
+#load-more:hover {
     cursor: pointer;
     border-color: var(--secondary-color);
     background: var(--secondary-color);
@@ -90,13 +90,6 @@ input:focus, textarea:focus, select:focus {
     width: 100%;
     margin: 10px 0;
     height: max(32px, 1rem);
-}
-
-#schedule {
-    width: 100%;
-    margin-bottom: 10px;
-    display: inline-block;
-    padding: 0.2rem 0;
 }
 
 #assignments-table {

@@ -1,6 +1,6 @@
 {
     "name": "EzSianet",
-    "description": "Quickly see all your Sianet assignments and schedule with this extension.",
+    "description": "Quickly see all your Sianet assignments with this extension.",
     "version": "0.10.3.7",
     "manifest_version": 3,
     "default_locale": "en",

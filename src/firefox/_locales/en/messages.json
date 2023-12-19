@@ -5,9 +5,6 @@
     "no_assignments_message": {
         "message": "You don't yet have any assignments this year :D"
     },
-    "open_schedule": {
-        "message": "Open my schedule"
-    },
     "assignment_title": {
         "message": "Title"
     },
@@ -51,7 +48,7 @@
         "message": "Visit your school's SiaNet webpage"
     },
     "generic_modal_3": {
-        "message": "Open your calendar and schedule on the website"
+        "message": "Open your calendar on the website"
     },
     "welcome_modal_title": {
         "message": "Welcome to EzSianet"
@@ -70,15 +67,6 @@
     },
     "assignments_error_modal_1": {
         "message": "If the error persists, there is probably an issue with Sianet servers. Feel free to contact me through Discord:"
-    },
-    "schedule_error_modal_title": {
-        "message": "Your schedule could not be loaded"
-    },
-    "schedule_error_modal_1": {
-        "message": "Open your schedule on the website"
-    },
-    "schedule_error_modal_2": {
-        "message": "If you don't yet have been assigned a schedule, don't worry. Otherwise, feel free to contact me through Discord:"
     },
     "network_error_modal_1": {
         "message": "If you wish to see other assignments, please follow the instructions below."
