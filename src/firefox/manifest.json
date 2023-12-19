@@ -7,7 +7,7 @@
         }
     },
     "description": "Quickly see all your Sianet assignments with this extension.",
-    "version": "0.10.3.7",
+    "version": "0.10.4.0",
     "manifest_version": 3,
     "default_locale": "en",
     "background": {
